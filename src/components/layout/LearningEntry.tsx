@@ -1,0 +1,3 @@
+import {VERSIONS} from '@/content/versions';
+export function LearningEntry({version}:{version:string}){const v=VERSIONS.find(v=>v.slug===version);if(!v)return null;return <section className="learning-entry shell"><p className="label">可体验 · 可下载</p><h2>{v.title}</h2><p>{v.description}</p><a className="home-primary" href={v.learn}>{v.outcome} →</a></section>}
+export function OpenResources({compact=false}:{compact?:boolean}){return <div className="shell section open-resources">{!compact&&<><h2>已开放的配套学习材料</h2><p>平台扩展练习与交付模板；原书代码、勘误及工具适配清单的状态另见资源清单。</p></>}<div className="learning-home-grid">{VERSIONS.map(v=><a className="learning-home-card" key={v.slug} href={v.learn}><h3>{v.name}</h3><p>{v.outcome}</p><span>查看材料 →</span></a>)}</div></div>}

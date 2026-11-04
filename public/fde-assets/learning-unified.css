@@ -1,0 +1,56 @@
+/* Shared white / blue editorial language for the five standalone lessons. */
+html[data-editorial][data-learning-unified]{--paper:#fff;--type:#162e50;--ink:#162e50;--accent:#285af0;--muted:#4c607b;--line:#dbe4ef;color-scheme:light;scroll-padding-top:100px}
+html[data-editorial][data-learning-unified] body{background:#fff!important;color:#162e50!important}
+html[data-editorial][data-learning-unified] :is(p,dd,blockquote){color:#344b68!important;line-height:1.85!important}
+html[data-editorial][data-learning-unified] :is(.shell){max-width:1280px!important;padding-inline:48px!important}
+html[data-editorial][data-learning-unified] :is(h1,h2,h3){color:#162e50!important}
+html[data-editorial][data-learning-unified] h1{font-size:40px!important;line-height:1.35!important;max-width:24em!important}
+html[data-editorial][data-learning-unified] h2{font-size:30px!important;line-height:1.45!important}
+html[data-editorial][data-learning-unified] h3{font-size:22px!important}
+html[data-editorial][data-learning-unified] :is(a.textlink,.label,.learning-intro>a){color:#2853ce!important}
+html[data-editorial][data-learning-unified] header{background:#fff!important;border-top:4px solid #285af0!important;border-bottom:1px solid #dbe4ef!important;z-index:100}
+html[data-editorial][data-learning-unified] header .top{min-height:84px!important;height:84px!important;padding-block:0!important;display:flex;align-items:center;justify-content:space-between;gap:16px}
+html[data-editorial][data-learning-unified] header .brand{font-family:"PingFang SC","Microsoft YaHei",sans-serif!important;font-size:16px!important;letter-spacing:0!important;white-space:nowrap}
+html[data-editorial][data-learning-unified] header #site-menu{background:#fff!important;gap:24px}
+html[data-editorial][data-learning-unified] header .global-nav{display:flex;gap:20px;align-items:center}
+html[data-editorial][data-learning-unified] header .global-nav>a{font-size:14px!important;min-height:44px;display:flex;align-items:center;color:#233e65!important}
+html[data-editorial][data-learning-unified] header .global-nav>a[aria-current]{color:#285af0!important;text-decoration:underline;text-underline-offset:8px}
+html[data-editorial][data-learning-unified] .learning-version-switcher{position:relative;padding:0;margin:0;border:0;background:white!important;min-width:120px}
+html[data-editorial][data-learning-unified] .learning-version-switcher>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:44px;list-style:none;padding:8px 16px;border:1px solid #285af0!important;color:#2452c8!important;background:#f4f7ff!important;font:600 14px/1.5 "PingFang SC",sans-serif}
+.learning-version-switcher>summary::-webkit-details-marker{display:none}
+html[data-editorial][data-learning-unified] .learning-version-options{position:absolute;top:52px;left:0;display:grid;gap:0;padding:8px;min-width:230px;max-width:calc(100vw - 40px);background:white!important;border:1px solid #ced9ec!important;z-index:110}
+html[data-editorial][data-learning-unified] .learning-version-options a{padding:12px;min-height:44px;border-bottom:1px solid #e1e8f2!important;font-size:14px;color:#203c64!important}
+html[data-editorial][data-learning-unified] .learning-version-options a[aria-current]{background:#edf3ff!important;color:#2454da!important;font-weight:600}
+html[data-editorial][data-learning-unified] .learning-intro{background:#f3f6ff!important;padding-block:36px 28px!important;border-bottom:1px solid #dbe4ef!important}
+html[data-editorial][data-learning-unified] main>.section{padding-block:36px!important}
+html[data-editorial][data-learning-unified] :is(.card,.source,.pathcard){padding:24px!important;border:1px solid #dbe4ef!important;background:#fff!important}
+html[data-editorial][data-learning-unified] .button{background:#285af0!important;color:white!important;border:1px solid #285af0!important;border-radius:6px!important;min-height:44px;padding:10px 18px!important;font-size:14px!important;font-weight:600}
+html[data-editorial][data-learning-unified] .button.secondary{background:#fff!important;color:#2853ce!important;border-color:#a7bcf5!important}
+html[data-editorial][data-learning-unified] :is(button,a,summary,input,textarea,select):focus-visible{outline:3px solid #e6a531!important;outline-offset:3px}
+html[data-editorial][data-learning-unified] :is(.practice-steps li,#practice-progress,blockquote,#review-result:not(:empty),#content-result:not(:empty),#qa-result:not(:empty)){background:#f1f5ff!important;color:#23436e!important;border-color:#85a4ef!important}
+html[data-editorial][data-learning-unified] .practice-nav a{border:1px solid #bdcdf0!important;color:#2853ce!important;border-radius:6px!important;background:#fff!important}
+html[data-editorial][data-learning-unified] :is(textarea,select,input:not([type=checkbox])){background:white!important;color:#183450!important;border-color:#b8c9df!important}
+html[data-editorial][data-learning-unified] input[type=checkbox]{accent-color:#285af0}
+html[data-editorial][data-learning-unified] footer{background:#14283f!important;color:#edf3ff!important;padding-block:28px!important}
+html[data-editorial][data-learning-unified] footer :is(p,a){color:#d9e5f6!important;font-size:13px!important}
+html[data-editorial][data-learning-unified] .lesson-contents{border:1px solid #dbe4ef!important;margin-block:20px!important;padding:16px 20px!important}
+@media(max-width:1023px){
+html[data-editorial][data-learning-unified] header #site-menu{top:84px!important;max-height:calc(100dvh - 84px);overflow-y:auto;padding:20px!important;align-items:stretch}
+html[data-editorial][data-learning-unified] header .global-nav{align-items:stretch;gap:4px}
+html[data-editorial][data-learning-unified] .learning-version-options{position:static;max-width:none;width:100%;margin-top:8px;border:0!important;border-left:2px solid #dbe4ef!important;box-sizing:border-box}
+}
+@media(max-width:767px){
+html[data-editorial][data-learning-unified] :is(.shell){padding-inline:20px!important}
+html[data-editorial][data-learning-unified] header .top{min-height:72px!important;height:72px!important;}
+html[data-editorial][data-learning-unified] header #site-menu{top:76px!important;max-height:calc(100dvh - 76px)}
+html[data-editorial][data-learning-unified] h1{font-size:30px!important;line-height:1.4!important}
+html[data-editorial][data-learning-unified] h2{font-size:26px!important}
+html[data-editorial][data-learning-unified] h3{font-size:21px!important}
+html[data-editorial][data-learning-unified] .learning-intro{padding-block:24px!important}
+html[data-editorial][data-learning-unified] main>.section{padding-block:26px!important}
+html[data-editorial][data-learning-unified] :is(.card,.source,.pathcard){padding:18px!important}
+html[data-editorial][data-learning-unified] textarea{font-size:16px!important}
+}
+
+/* Delivery reading refinement */
+html[data-learning-unified] .delivery-use{max-width:1100px;margin:24px auto;padding:20px;border-left:3px solid #285af0;background:#f2f6ff;font-size:14px;line-height:1.9}html[data-learning-unified] pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px!important;line-height:1.85}html[data-learning-unified] .section p,html[data-learning-unified] .section li{font-size:16px}html[data-learning-unified] :is(h1,h2,h3){text-wrap:pretty}html[data-learning-unified] .section{scroll-margin-top:110px}

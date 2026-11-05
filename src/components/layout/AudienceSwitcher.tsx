@@ -22,7 +22,10 @@ export function AudienceSwitcher() {
                 "inline-block rounded-full px-3 py-1 text-sm",
                 current === a
                   ? "bg-brand-600 text-white"
-                  : "text-ink-muted hover:bg-surface-muted dark:text-ink-dark-muted dark:hover:bg-surface-dark-muted",
+                  : cn(
+                      "text-ink-muted hover:bg-surface-muted",
+                      "dark:text-ink-dark-muted dark:hover:bg-surface-dark-muted",
+                    ),
               )}
             >
               {t.audiences[a].label}

@@ -3,10 +3,16 @@ import { Container } from "@/components/ui";
 import { siteConfig } from "@/config/site";
 import { t } from "@/i18n";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t border-line py-8 text-sm text-ink-muted dark:border-line-dark dark:text-ink-dark-muted">
+    <footer
+      className={cn(
+        "mt-16 border-t border-line py-8",
+        "text-sm text-ink-muted dark:border-line-dark dark:text-ink-dark-muted",
+      )}
+    >
       <Container className="flex flex-col gap-3">
         <p>{t.site.placeholderNotice}</p>
         <p>{t.footer.noTracking}</p>

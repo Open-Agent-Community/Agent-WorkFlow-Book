@@ -5,6 +5,7 @@ import { resolveStep } from "@/content";
 import { t } from "@/i18n";
 import type { Audience } from "@/lib/audiences";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 function hrefFor(kind: "chapter" | "case" | "lab", ref: string, audience: Audience) {
   if (kind === "chapter") return routes.chapter(ref);
@@ -24,7 +25,10 @@ export function PathSteps({ path }: { path: LearningPath }) {
           >
             <span
               aria-hidden="true"
-              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700 dark:bg-brand-700 dark:text-white"
+              className={cn(
+                "flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm",
+                "font-semibold text-brand-700 dark:bg-brand-700 dark:text-white",
+              )}
             >
               {i + 1}
             </span>

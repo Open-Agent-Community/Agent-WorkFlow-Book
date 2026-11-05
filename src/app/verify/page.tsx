@@ -5,6 +5,7 @@ import { listVerifyRecords } from "@/content";
 import { t } from "@/i18n";
 import { routes } from "@/lib/routes";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: t.verify.title,
@@ -37,7 +38,10 @@ export default async function VerifyPage({
               required
               autoComplete="off"
               placeholder="DEMO-XXXX-XXXX"
-              className="min-w-0 flex-1 rounded-lg border border-line bg-surface px-3 py-2 font-mono dark:border-line-dark dark:bg-surface-dark"
+              className={cn(
+                "min-w-0 flex-1 rounded-lg border border-line bg-surface px-3 py-2 font-mono",
+                "dark:border-line-dark dark:bg-surface-dark",
+              )}
             />
             <Button type="submit">{t.verify.submit}</Button>
           </div>

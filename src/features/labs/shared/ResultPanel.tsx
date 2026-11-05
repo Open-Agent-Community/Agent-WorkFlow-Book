@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { t } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 export interface ResultItem {
   key: string;
@@ -23,7 +24,10 @@ export function ResultPanel({
   return (
     <section
       aria-labelledby="lab-result-heading"
-      className="rounded-card border border-line bg-surface-muted p-4 dark:border-line-dark dark:bg-surface-dark-muted"
+      className={cn(
+        "rounded-card border border-line bg-surface-muted p-4 dark:border-line-dark",
+        "dark:bg-surface-dark-muted",
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
         <h3 id="lab-result-heading" className="font-semibold">

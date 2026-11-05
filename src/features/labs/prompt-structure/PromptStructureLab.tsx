@@ -8,6 +8,7 @@ import { inputClass, labelClass } from "../shared/fields";
 import { ResultPanel } from "../shared/ResultPanel";
 import type { PromptSections } from "./rules";
 import { analyzePrompt, assemblePrompt, emptySections, REQUIRED, SECTIONS } from "./rules";
+import { cn } from "@/lib/utils";
 
 const s = t.labs.prompt;
 
@@ -68,7 +69,12 @@ export function PromptStructureLab() {
             <h3 id="prompt-preview-heading" className="mb-2 font-semibold">
               {s.preview}
             </h3>
-            <pre className="min-h-24 overflow-x-auto rounded-card border border-line p-4 font-mono text-xs whitespace-pre-wrap dark:border-line-dark">
+            <pre
+              className={cn(
+                "min-h-24 overflow-x-auto rounded-card border border-line",
+                "p-4 font-mono text-xs whitespace-pre-wrap dark:border-line-dark",
+              )}
+            >
               {assembled || s.previewEmpty}
             </pre>
           </section>

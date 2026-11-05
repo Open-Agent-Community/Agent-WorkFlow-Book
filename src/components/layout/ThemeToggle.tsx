@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { t } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 type Theme = "light" | "dark";
 
@@ -30,7 +31,10 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className="inline-flex size-9 items-center justify-center rounded-lg border border-line hover:bg-surface-muted dark:border-line-dark dark:hover:bg-surface-dark-muted"
+      className={cn(
+        "inline-flex size-9 items-center justify-center rounded-lg border border-line",
+        "hover:bg-surface-muted dark:border-line-dark dark:hover:bg-surface-dark-muted",
+      )}
     >
       <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
     </button>

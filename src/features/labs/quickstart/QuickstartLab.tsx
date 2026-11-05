@@ -13,6 +13,7 @@ import {
   STAGES,
 } from "./rules";
 import { StageBody } from "./StageBody";
+import { cn } from "@/lib/utils";
 
 const s = t.labs.quickstart;
 
@@ -45,7 +46,9 @@ export function QuickstartLab() {
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={percent}
-          className="mt-3 h-2 overflow-hidden rounded-full bg-surface-muted dark:bg-surface-dark-muted"
+          className={cn(
+            "mt-3 h-2 overflow-hidden rounded-full bg-surface-muted dark:bg-surface-dark-muted",
+          )}
         >
           <div className="h-full bg-brand-500" style={{ width: `${percent}%` }} />
         </div>

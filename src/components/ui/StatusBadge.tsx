@@ -2,6 +2,7 @@ import type { ContentStatus } from "@/content/schema";
 import { t } from "@/i18n";
 import type { BadgeTone } from "./Badge";
 import { Badge } from "./Badge";
+import { cn } from "@/lib/utils";
 
 const tone: Record<ContentStatus, BadgeTone> = {
   published: "ok",
@@ -24,7 +25,10 @@ export function StatusNote({ status }: { status: ContentStatus }) {
   return (
     <p
       role="note"
-      className="mt-4 rounded-lg border border-dashed border-line bg-surface-muted px-4 py-3 text-sm text-ink-muted dark:border-line-dark dark:bg-surface-dark-muted dark:text-ink-dark-muted"
+      className={cn(
+        "mt-4 rounded-lg border border-dashed border-line bg-surface-muted px-4 py-3 text-sm",
+        "text-ink-muted dark:border-line-dark dark:bg-surface-dark-muted dark:text-ink-dark-muted",
+      )}
     >
       {t.statusHint[status]}
     </p>

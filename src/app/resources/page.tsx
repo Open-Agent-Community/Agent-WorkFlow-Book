@@ -3,6 +3,7 @@ import { listResources } from "@/content";
 import { t } from "@/i18n";
 import { routes } from "@/lib/routes";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: t.resources.title,
@@ -19,7 +20,10 @@ export default function ResourcesPage() {
           {listResources().map((r) => (
             <li
               key={r.id}
-              className="flex flex-col gap-3 rounded-card border border-line p-4 sm:flex-row sm:items-center sm:justify-between dark:border-line-dark"
+              className={cn(
+                "flex flex-col gap-3 rounded-card border border-line p-4 sm:flex-row",
+                "sm:items-center sm:justify-between dark:border-line-dark",
+              )}
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">

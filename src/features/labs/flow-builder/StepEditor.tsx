@@ -5,6 +5,7 @@ import { t } from "@/i18n";
 import { inputClass, labelClass } from "../shared/fields";
 import type { FlowAction, FlowIssue, FlowStep } from "./rules";
 import { OWNERS, STEP_KINDS } from "./rules";
+import { cn } from "@/lib/utils";
 
 const s = t.labs.flow;
 
@@ -28,7 +29,10 @@ export function StepEditor({
 
   return (
     <fieldset
-      className="rounded-card border border-line p-4 data-[invalid=true]:border-danger/60 dark:border-line-dark"
+      className={cn(
+        "rounded-card border border-line p-4 data-[invalid=true]:border-danger/60",
+        "dark:border-line-dark",
+      )}
       data-invalid={issues.length > 0}
     >
       <legend className="px-1 text-sm font-semibold">

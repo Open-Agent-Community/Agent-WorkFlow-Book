@@ -4,6 +4,7 @@ import { getVerifyRecord, listVerifyRecords } from "@/content";
 import { t } from "@/i18n";
 import { routes } from "@/lib/routes";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 type Params = Promise<{ token: string }>;
 
@@ -28,11 +29,19 @@ export default async function VerifyResultPage({ params }: { params: Params }) {
       <PageHero title={t.verify.title} lead={<span className="font-mono">{token}</span>} />
       <Container className="py-8">
         {record ? (
-          <div className="relative max-w-xl overflow-hidden rounded-lg border-2 border-dashed border-line p-6 dark:border-line-dark">
+          <div
+            className={cn(
+              "relative max-w-xl overflow-hidden rounded-lg border-2",
+              "border-dashed border-line p-6 dark:border-line-dark",
+            )}
+          >
             <svg
               aria-hidden="true"
               focusable="false"
-              className="pointer-events-none absolute inset-0 size-full text-ink/10 select-none dark:text-ink-dark/10"
+              className={cn(
+                "pointer-events-none absolute inset-0 size-full text-ink/10 select-none",
+                "dark:text-ink-dark/10",
+              )}
             >
               <text
                 x="50%"

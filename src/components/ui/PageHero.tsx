@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Container } from "./Container";
+import { cn } from "@/lib/utils";
 
 export function PageHero({
   title,
@@ -15,7 +16,12 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="border-b border-line bg-surface-muted py-10 dark:border-line-dark dark:bg-surface-dark-muted">
+    <section
+      className={cn(
+        "border-b border-line bg-surface-muted",
+        "py-10 dark:border-line-dark dark:bg-surface-dark-muted",
+      )}
+    >
       <Container>
         {eyebrow ? (
           <p className="text-sm font-medium text-brand-700 dark:text-brand-300">{eyebrow}</p>

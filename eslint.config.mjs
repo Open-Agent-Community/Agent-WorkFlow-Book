@@ -25,6 +25,10 @@ const config = [
         { "ts-expect-error": true, "ts-ignore": true },
       ],
       "@typescript-eslint/consistent-type-imports": "error",
+      "max-len": [
+        "error",
+        { code: 100, ignoreUrls: true, ignoreRegExpLiterals: true, ignorePattern: "^import " },
+      ],
       "max-lines": ["error", { max: 250, skipBlankLines: false, skipComments: false }],
       "react/no-danger": "error",
       "no-restricted-syntax": [

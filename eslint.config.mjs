@@ -7,7 +7,13 @@ const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta
 
 const config = [
   {
-    ignores: [".next/**", "node_modules/**", "playwright-report/**", "test-results/**"],
+    ignores: [
+      "next-env.d.ts",
+      ".next/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+    ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...tseslint.configs.strict,

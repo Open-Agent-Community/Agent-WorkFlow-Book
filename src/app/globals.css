@@ -1,47 +1,255 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "Noto Sans CJK SC", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* 青柠夜航（日光）：深蓝黑结构色 + 青柠主行动色 + 浅色阅读背景 */
+  --color-ink-950: #050a14;
+  --color-ink-900: #0a1322;
+  --color-ink-800: #101f38;
+  --color-ink-700: #1a2f52;
+  --color-ink-600: #26406b;
+  --color-ink-300: #8fa3c4;
+  --color-ink-200: #c6d3e8;
+  --color-ink-100: #dde7f5;
+  --color-ink-50: #f0f5fc;
 
-  --color-surface: #ffffff;
-  --color-surface-muted: #f4f6f8;
-  --color-surface-dark: #0f1419;
-  --color-surface-dark-muted: #1a2129;
-  --color-ink: #14202b;
-  --color-ink-muted: #4a5866;
-  --color-ink-dark: #e7edf3;
-  --color-ink-dark-muted: #a3b1bf;
-  --color-line: #d9e0e7;
-  --color-line-dark: #2c3743;
+  --color-paper: #f7f9f5;
 
-  --color-brand-50: #eef6ff;
-  --color-brand-100: #d9eaff;
-  --color-brand-500: #2f6fd6;
-  --color-brand-600: #2259b5;
-  --color-brand-700: #1b4690;
-  --color-brand-300: #8ab8f5;
+  --color-accent: #a3e635;
+  --color-accent-strong: #4d7c0f;
+  --color-accent-soft: #ecfccb;
 
-  --color-ok: #1f7a4d;
-  --color-warn: #8a5a00;
-  --color-danger: #b42318;
-  --color-sim: #6b3fa0;
+  /* 图书篇章辅助色（§13.1）：基础青 / 方法蓝 / 技术紫 / 实践暖黄 */
+  --color-part-foundation: #0d9488;
+  --color-part-foundation-soft: #ccfbf1;
+  --color-part-method: #2563eb;
+  --color-part-method-soft: #dbeafe;
+  --color-part-tech: #7c3aed;
+  --color-part-tech-soft: #ede9fe;
+  --color-part-practice: #d97706;
+  --color-part-practice-soft: #fef3c7;
 
-  --radius-card: 0.875rem;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
 }
 
-@layer base {
-  html {
-    @apply bg-surface text-ink dark:bg-surface-dark dark:text-ink-dark;
-  }
-  body {
-    @apply min-h-dvh font-sans antialiased;
-  }
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-500;
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+}
+
+/* 深色区块的网格纹理与光晕装饰 */
+@utility hero-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, black 40%, transparent 100%);
+}
+
+@utility glow-accent {
+  background: radial-gradient(closest-side, rgb(163 230 53 / 0.14), transparent);
+}
+
+@utility glow-blue {
+  background: radial-gradient(closest-side, rgb(59 130 246 / 0.12), transparent);
+}
+
+@utility card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px -12px rgb(10 19 34 / 0.18);
+    border-color: var(--color-ink-200);
   }
 }
+
+@utility nav-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.25s ease;
+  padding-bottom: 2px;
+  &:hover {
+    background-size: 100% 2px;
+  }
+}
+
+@utility glass-dark {
+  background: rgb(16 31 56 / 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgb(198 211 232 / 0.12);
+}
+
+/* ========== 暗黑模式：黑 + 白 ==========
+   通过重写设计令牌 + 集中覆写浅色工具类实现，页面组件零改动。 */
+
+html.dark {
+  color-scheme: dark;
+
+  --color-ink-950: #000000;
+  --color-ink-900: #101010;
+  --color-ink-800: #1b1b1b;
+  --color-ink-700: #2b2b2b;
+  --color-ink-600: #525252;
+  --color-ink-300: #a3a3a3;
+  --color-ink-200: #d4d4d4;
+  --color-ink-100: #e5e5e5;
+  --color-ink-50: #fafafa;
+
+  --color-paper: #000000;
+
+  --color-accent: #ffffff;
+  --color-accent-strong: #ffffff;
+  --color-accent-soft: rgb(255 255 255 / 0.1);
+
+  --color-part-foundation: #e5e5e5;
+  --color-part-foundation-soft: rgb(255 255 255 / 0.08);
+  --color-part-method: #e5e5e5;
+  --color-part-method-soft: rgb(255 255 255 / 0.08);
+  --color-part-tech: #e5e5e5;
+  --color-part-tech-soft: rgb(255 255 255 / 0.08);
+  --color-part-practice: #e5e5e5;
+  --color-part-practice-soft: rgb(255 255 255 / 0.08);
+}
+
+.dark body {
+  background-color: #000000;
+  color: var(--color-ink-50);
+}
+
+.dark ::selection {
+  background: #2b2b2b;
+}
+
+/* 表面 */
+.dark .bg-white {
+  background-color: var(--color-ink-900);
+}
+.dark .bg-ink-50,
+.dark .bg-ink-50\/60 {
+  background-color: rgb(255 255 255 / 0.05);
+}
+.dark .bg-ink-100 {
+  background-color: var(--color-ink-700);
+}
+
+/* 文字 */
+.dark .text-ink-900 {
+  color: var(--color-ink-50);
+}
+.dark .text-ink-800 {
+  color: var(--color-ink-100);
+}
+.dark .text-ink-600 {
+  color: var(--color-ink-200);
+}
+
+/* 边框与分隔线 */
+.dark .border-ink-100 {
+  border-color: var(--color-ink-700);
+}
+.dark .border-ink-200,
+.dark .border-ink-300 {
+  border-color: var(--color-ink-600);
+}
+.dark .divide-ink-100 > * + * {
+  border-color: var(--color-ink-700);
+}
+
+/* 主行动色：暗黑下为白色（白按钮 + 黑字） */
+.dark .bg-accent {
+  color: #000000;
+}
+.dark .text-accent,
+.dark .bg-ink-950 .text-accent,
+.dark .bg-ink-900 .text-accent,
+.dark .text-accent-strong {
+  color: #ffffff;
+}
+.dark .border-accent {
+  border-color: rgb(255 255 255 / 0.35);
+}
+.dark .border-accent-strong {
+  border-color: #ffffff;
+}
+.dark .bg-accent\/10,
+.dark .bg-accent\/15,
+.dark .bg-accent-soft,
+.dark .bg-accent-soft\/50,
+.dark .bg-accent-soft\/60 {
+  background-color: rgb(255 255 255 / 0.08);
+}
+.dark .hover\:border-accent:hover,
+.dark .hover\:border-accent\/60:hover {
+  border-color: rgb(255 255 255 / 0.5);
+}
+.dark :focus-visible {
+  outline-color: #ffffff;
+}
+.dark .focus\:border-accent-strong:focus {
+  border-color: #ffffff;
+}
+
+/* 提示框：暗黑下统一为灰白（错误保留红色以便识别） */
+.dark .bg-blue-50,
+.dark .bg-amber-50 {
+  background-color: rgb(255 255 255 / 0.06);
+}
+.dark .text-blue-700,
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #d4d4d4;
+}
+.dark .border-amber-200,
+.dark .border-blue-200 {
+  border-color: #2b2b2b;
+}
+.dark .bg-red-50 {
+  background-color: rgb(239 68 68 / 0.12);
+}
+.dark .text-red-600,
+.dark .text-red-700 {
+  color: #fca5a5;
+}
+.dark .border-red-200 {
+  border-color: rgb(239 68 68 / 0.35);
+}
+
+/* 篇章色圆点在暗色下统一为浅灰 */
+.dark .bg-part-foundation,
+.dark .bg-part-method,
+.dark .bg-part-tech,
+.dark .bg-part-practice {
+  background-color: #e5e5e5;
+}
+
+/* 光晕与玻璃卡在暗色下转为白色系 */
+.dark .glow-accent,
+.dark .glow-blue {
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.07), transparent);
+}
+.dark .glass-dark {
+  background: rgb(255 255 255 / 0.05);
+  border-color: rgb(255 255 255 / 0.12);
+}
+
+/* Government references are separate from the book. */
+.policy-reference-notice{margin-top:24px;padding:20px 24px;border:1px solid #b8c9ee;border-left:4px solid #315cf5;border-radius:12px;background:#fff;color:#243653;max-width:900px;line-height:1.75}
+.policy-reference-notice strong{display:block;font-size:16px;color:#183a88}
+.policy-reference-notice p{font-size:14px;margin:8px 0 0;max-width:none}
+.policy-visible-source a{text-decoration:underline;text-underline-offset:3px}
+.policy-document-heading .policy-source-note,.policy-source-note{font-size:13px;line-height:1.7;color:#53627a;max-width:850px}
+@media(max-width:600px){.policy-reference-notice{padding:16px;margin-top:18px}.policy-reference-notice strong{font-size:15px}}

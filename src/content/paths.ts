@@ -1,75 +1,112 @@
-import type { z } from "zod";
-import type { PathSchema } from "./schema";
+import type { Audience } from "@/lib/audience";
 
-export const paths: z.input<typeof PathSchema>[] = [
+/** 学习路径（§6.2 等）。数量与投入不硬写宣传数字，开放状态来自发布配置。 */
+export type PathStatus = "已发布" | "参考大纲" | "预告";
+
+export interface LearningPath {
+  id: string;
+  audience: Audience;
+  title: string;
+  audienceLabel: string; // 适合对象
+  summary: string; // 主要内容
+  chapters: string[]; // 原书重点 B 编号
+  outcome: string; // 必交成果
+  prerequisite: string; // 先修要求
+  status: PathStatus;
+  nodes: string[]; // 任务地图节点（公开详情页展示）
+}
+
+export const PATHS: LearningPath[] = [
   {
-    id: "first-workflow",
+    id: "R-PATH-01",
     audience: "reader",
-    title: "第一条工作流",
-    summary: "从概念到第一次动手练习，适合刚接触智能体工作流的读者。",
-    estimatedHours: 3,
-    status: "published",
-    steps: [
-      { kind: "chapter", ref: "ch01", note: "先建立基本概念。" },
-      { kind: "lab", ref: "quickstart", note: "用五分钟走完一次完整流程。" },
-      { kind: "chapter", ref: "ch04", note: "学习如何从目标拆出步骤。" },
-      { kind: "case", ref: "course-feedback", note: "看一个小规模的完整示例。" },
-    ],
+    title: "第一个工作流",
+    audienceLabel: "零基础读者",
+    summary: "流程要素、分工、提示词、核查和人工修改。",
+    chapters: ["B01", "B02", "B03", "B07"],
+    outcome: "任务说明＋流程图＋修改后的结果",
+    prerequisite: "无，可从五分钟首练开始",
+    status: "已发布",
+    nodes: ["阅读合成会议素材", "查看预设草稿", "修订日期与责任", "对照素材核查", "下载流程卡与成果"],
   },
   {
-    id: "semester-course",
+    id: "R-PATH-02",
+    audience: "reader",
+    title: "内容与办公提效",
+    audienceLabel: "职场人、创作者",
+    summary: "内容生成、资料整理与数据流转。",
+    chapters: ["B07", "B09", "B10", "B12"],
+    outcome: "一套可复用的内容或办公模板",
+    prerequisite: "建议先完成 R-PATH-01",
+    status: "预告",
+    nodes: ["内容生成基础", "资料整理与流转", "办公自动化", "模板沉淀与复用"],
+  },
+  {
+    id: "R-PATH-03",
+    audience: "reader",
+    title: "个人知识助手",
+    audienceLabel: "需要整理与检索资料的读者",
+    summary: "资料整理、检索、引用与无答案处理。",
+    chapters: ["B04", "B07", "B08", "B13"],
+    outcome: "带引用的问答示例及失败用例",
+    prerequisite: "建议先完成 R-PATH-01",
+    status: "预告",
+    nodes: ["资料清单与整理", "检索与引用", "无答案处理", "问答示例与失败用例"],
+  },
+  {
+    id: "R-PATH-04",
+    audience: "reader",
+    title: "自动化与节点编排",
+    audienceLabel: "自动化爱好者",
+    summary: "触发、节点、参数、状态与异常。",
+    chapters: ["B02", "B05", "B08", "B09"],
+    outcome: "一条流程与运行、恢复记录",
+    prerequisite: "建议先完成 R-PATH-01",
+    status: "预告",
+    nodes: ["触发与节点", "参数与字段映射", "运行与状态", "异常与恢复记录"],
+  },
+  {
+    id: "R-PATH-05",
+    audience: "reader",
+    title: "智能体设计进阶",
+    audienceLabel: "开发者、产品经理",
+    summary: "模式选择、工具、协作与评估。",
+    chapters: ["B04", "B05", "B06", "B07", "B08", "B11", "B12", "B13"],
+    outcome: "一份方案设计与可验证项目",
+    prerequisite: "建议先完成 R-PATH-01；B11—B13 为选修",
+    status: "预告",
+    nodes: ["设计模式选择", "编排与工具", "评估与优化", "行业案例选修", "方案设计项目"],
+  },
+  {
+    id: "C-PATH-01",
     audience: "campus",
-    title: "一学期课程主线",
-    summary: "配合教学大纲使用的课程主线，每个阶段都有对应的实验练习。",
-    estimatedHours: 32,
-    status: "published",
-    steps: [
-      { kind: "chapter", ref: "ch01", note: "第一周导论。" },
-      { kind: "chapter", ref: "ch02", note: "任务与角色划分。" },
-      { kind: "lab", ref: "flow-builder", note: "课堂练习：搭建一条带复核的流程。" },
-      { kind: "chapter", ref: "ch08", note: "结构化提示（预览章节）。" },
-      { kind: "lab", ref: "prompt-structure", note: "课后练习：整理一条提示。" },
-    ],
+    title: "智能体工作流参考教学路径（16 周）",
+    audienceLabel: "高校教师与学生",
+    summary: "16周课程设计参考，不是已开放的完整课程；先使用90分钟公开样课。",
+    chapters: ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13"],
+    outcome: "实验成果与综合课程项目（前测、作业、项目答辩与后测）",
+    prerequisite: "由教师按三类开课方式选择技术深度",
+    status: "参考大纲",
+    nodes: ["阅读90分钟公开样课", "基础三讲（B01—B03）", "方法论三讲（B04—B06）", "技术实现四讲（B07—B10）", "行业项目（B11—B13）", "综合项目与答辩"],
   },
   {
-    id: "pilot-readiness",
+    id: "E-PATH-01",
     audience: "enterprise",
-    title: "试点准备",
-    summary: "帮助业务与技术负责人判断一个场景是否适合试点，以及试点前需要准备什么。",
-    estimatedHours: 6,
-    status: "published",
-    steps: [
-      { kind: "chapter", ref: "ch03", note: "先排除不适合的场景。" },
-      { kind: "chapter", ref: "ch05", note: "明确责任人与人工复核点。" },
-      { kind: "case", ref: "invoice-triage", note: "参考一个后台流程案例。" },
-      { kind: "lab", ref: "flow-builder", note: "把候选场景画成流程并自查。" },
-    ],
-  },
-  {
-    id: "delivery-loop",
-    audience: "fde",
-    title: "交付闭环",
-    summary: "面向一线交付工程师：需求、方案、最小闭环、验证与交接。",
-    estimatedHours: 10,
-    status: "preview",
-    steps: [
-      { kind: "chapter", ref: "ch04", note: "从需求访谈到流程草图。" },
-      { kind: "chapter", ref: "ch07", note: "先设计异常路径。" },
-      { kind: "lab", ref: "flow-builder", note: "用规则自查流程完整性。" },
-      { kind: "case", ref: "support-handoff", note: "参考一个交接案例。" },
-      { kind: "chapter", ref: "ch10", note: "设计验证方法（预览章节）。" },
-    ],
-  },
-  {
-    id: "production-operations",
-    audience: "fde",
-    title: "生产运维（筹备中）",
-    summary: "上线后的监控、回滚与持续改进。内容仍在筹备，暂不开放。",
-    estimatedHours: 8,
-    status: "planned",
-    steps: [
-      { kind: "chapter", ref: "ch11", note: "试点与上线。" },
-      { kind: "chapter", ref: "ch12", note: "运行监控与改进。" },
-    ],
+    title: "企业 AI 入门短路径",
+    audienceLabel: "企业员工（零基础起步）",
+    summary: "围绕合成客服退款场景，完成诊断、回复、审核和复盘。",
+    chapters: ["B01", "B02", "B03"],
+    outcome: "一项经过人工修改的模拟作品",
+    prerequisite: "无；使用公开合成资料，不需要企业管理员账号",
+    status: "已发布",
+    nodes: ["确认试点范围", "阅读政策与典型问题", "形成回复并审核", "记录基线与异常", "下载成果并复盘"],
   },
 ];
+
+export function pathsByAudience(audience: Audience): LearningPath[] {
+  return PATHS.filter((p) => p.audience === audience);
+}
+
+export function getPath(audience: Audience, pathId: string): LearningPath | undefined {
+  return PATHS.find((p) => p.audience === audience && p.id === pathId.toUpperCase());
+}

@@ -1,0 +1,5 @@
+import type {ReactNode} from 'react';
+type Stage={id:string;title:string;intro:string};
+export function ReadingGuide({stages}:{stages:readonly Stage[]}) {return <nav className="reading-guide shell" aria-label="本页阅读顺序"><p>本页怎么读</p><ol>{stages.map((stage,i)=><li key={stage.id}><a href={'#'+stage.id}><span>{String(i+1).padStart(2,'0')}</span>{stage.title}</a></li>)}</ol></nav>}
+export function ContentStage({stage,index,children}:{stage:Stage;index:number;children:ReactNode}) {return <section className="content-stage" id={stage.id} aria-labelledby={stage.id+'-title'}><div className="stage-heading shell"><p className="label">{String(index+1).padStart(2,'0')} / 阅读与实践</p><h2 id={stage.id+'-title'}>{stage.title}</h2><p>{stage.intro}</p></div><div className="stage-content">{children}</div></section>}
+export function ExtraReading({title,description,children}:{title:string;description:string;children:ReactNode}) {return <details className="extra-reading shell"><summary><span><strong>{title}</strong><span>{description}</span></span><span className="extra-reading-indicator" aria-hidden="true"/></summary><div className="extra-reading-content">{children}</div></details>}

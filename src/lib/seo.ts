@@ -1,68 +1,21 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
-import type { ContentStatus } from "@/content/schema";
-import { t } from "@/i18n";
+import { BOOK } from "@/content/book";
+import { SITE } from "@/content/site";
 
-export interface MetadataInput {
-  title?: string;
-  description?: string;
-  /** Site-relative path, e.g. `/book`. */
-  path: string;
-  status?: ContentStatus;
-  /** Force noindex (e.g. lookup results). */
-  noindex?: boolean;
-}
+export const SITE_URL = "https://agentflow.moyingsmart.cn";
 
-export function absoluteUrl(path: string): string {
-  return new URL(path, siteConfig.url).toString();
-}
-
-/** Central metadata builder: canonical URL, Open Graph, and noindex for planned content. */
-export function buildMetadata(input: MetadataInput): Metadata {
-  const title = input.title ? `${input.title} · ${siteConfig.name}` : siteConfig.name;
-  const description = input.description ?? t.site.description;
-  const url = absoluteUrl(input.path);
-  const noindex = input.noindex || input.status === "planned";
+/** Keep canonical and share metadata consistent; never inherit the homepage URL. */
+export function pageSeo(path: string, metadata: Metadata): Metadata {
+  const title = typeof metadata.title === "string"
+    ? metadata.title.replace(/[｜|]\s*智能体工作流设计$/, "") : SITE.name;
+  const description = typeof metadata.description === "string" ? metadata.description : SITE.description;
+  const url = new URL(path, SITE_URL).href;
+  const images = [{ url: new URL(BOOK.cover.src, SITE_URL).href, width: BOOK.cover.width, height: BOOK.cover.height, alt: BOOK.title }];
   return {
+    ...metadata,
     title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      locale: "zh_CN",
-      siteName: siteConfig.name,
-      title,
-      description,
-      url,
-    },
-    robots: noindex ? { index: false, follow: true } : { index: true, follow: true },
-  };
-}
-
-/** Serialise JSON-LD safely for inline <script> use: `<` is escaped so `</script>` cannot occur. */
-export function serializeJsonLd(data: unknown): string {
-  return JSON.stringify(data).replace(/</g, "\\u003c");
-}
-
-export function breadcrumbJsonLd(items: ReadonlyArray<{ name: string; href: string }>) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      item: absoluteUrl(item.href),
-    })),
-  };
-}
-
-export function websiteJsonLd() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: siteConfig.name,
-    url: siteConfig.url,
-    inLanguage: siteConfig.locale,
+    alternates: { ...metadata.alternates, canonical: url },
+    openGraph: { type: "website", locale: "zh_CN", siteName: SITE.name, title, description, url, images },
+    twitter: { card: "summary_large_image", title, description, images: images.map(image => image.url) },
   };
 }

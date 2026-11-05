@@ -1,0 +1,1 @@
+(()=>{const b=document.querySelector('#reset-reader');if(!b)return;b.addEventListener('click',()=>{if(!confirm('请先下载备份。确认清空本练习草稿并重新开始？'))return;try{localStorage.removeItem('agentflow-reader-draft-v1');location.reload()}catch{document.querySelector('#reset-reader-status').textContent='无法清空浏览器存储，请使用浏览器设置；已下载的文件不受影响。'}})})();

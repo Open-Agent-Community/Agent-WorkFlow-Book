@@ -1,6 +1,0 @@
-node_modules
-.next
-pnpm-lock.yaml
-playwright-report
-test-results
-coverage

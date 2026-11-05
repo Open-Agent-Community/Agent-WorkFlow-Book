@@ -27,7 +27,16 @@ Content with status `planned` is labelled, set to `noindex` and left out of the 
 
 ## Quick start
 
-Requirements: Node.js 20 or later, and pnpm 10.
+Requirements:
+
+- Node.js `^22.22.2 || ^24.15.0 || >=26.0.0`, meaning 22.22.2 or later on the 22.x line, 24.15.0
+  or later on 24.x, or 26 and above. CI uses Node 22.22.2. Node 20 is not supported, because
+  several dev dependencies (`jsdom`, `@axe-core/playwright`, `@testing-library/jest-dom`) require
+  Node 22 or later.
+- pnpm 10 (the version is pinned in `packageManager`).
+
+`.npmrc` sets `engine-strict=true`, so `pnpm install` refuses to run on an unsupported Node
+version.
 
 ```bash
 pnpm install

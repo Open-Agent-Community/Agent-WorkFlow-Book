@@ -1,0 +1,50 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from "typescript-eslint";
+
+const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) });
+
+const config = [
+  {
+    ignores: [
+      "next-env.d.ts",
+      ".next/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+    ],
+  },
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...tseslint.configs.strict,
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/ban-ts-comment": [
+        "error",
+        { "ts-expect-error": true, "ts-ignore": true },
+      ],
+      "@typescript-eslint/consistent-type-imports": "error",
+      "max-len": [
+        "error",
+        { code: 100, ignoreUrls: true, ignoreRegExpLiterals: true, ignorePattern: "^import " },
+      ],
+      "max-lines": ["error", { max: 250, skipBlankLines: false, skipComments: false }],
+      "react/no-danger": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[property.name=/^(innerHTML|outerHTML)$/]",
+          message: "Do not patch the DOM directly; render with React.",
+        },
+      ],
+    },
+  },
+  {
+    // JSON-LD is the single allowed use of dangerouslySetInnerHTML (input is escaped).
+    files: ["src/components/seo/JsonLd.tsx"],
+    rules: { "react/no-danger": "off" },
+  },
+];
+
+export default config;

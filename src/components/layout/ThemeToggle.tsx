@@ -1,43 +1,42 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { t } from "@/i18n";
+import { cn } from "@/lib/utils";
 
-/** 白天/暗黑模式切换：类挂在 <html> 上，偏好存 localStorage（yq-theme） */
+type Theme = "light" | "dark";
+
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
   }, []);
 
-  const toggle = () => {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
+  function toggle() {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    document.documentElement.classList.toggle("dark", next === "dark");
     try {
-      localStorage.setItem("yq-theme", next ? "dark" : "light");
+      localStorage.setItem("theme", next);
     } catch {
-      /* 隐私模式下忽略 */
+      // Storage may be unavailable (private mode); the toggle still works for this page view.
     }
-  };
+    setTheme(next);
+  }
 
+  const label = theme === "dark" ? t.theme.toLight : t.theme.toDark;
   return (
     <button
       type="button"
       onClick={toggle}
-      role="switch"
-      aria-checked={dark}
-      aria-label={dark ? "切换到白天模式" : "切换到暗黑模式"}
-      title={dark ? "切换到白天模式" : "切换到暗黑模式"}
-      className="flex h-8 w-14 items-center rounded-full border border-ink-600 bg-ink-800 px-1 transition-colors"
+      aria-label={label}
+      title={label}
+      className={cn(
+        "inline-flex size-9 items-center justify-center rounded-lg border border-line",
+        "hover:bg-surface-muted dark:border-line-dark dark:hover:bg-surface-dark-muted",
+      )}
     >
-      <span
-        className={`flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs text-ink-950 transition-transform duration-200 ${
-          dark ? "translate-x-6" : "translate-x-0"
-        }`}
-      >
-        <span aria-hidden>{dark ? "🌙" : "☀️"}</span>
-      </span>
+      <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
     </button>
   );
 }

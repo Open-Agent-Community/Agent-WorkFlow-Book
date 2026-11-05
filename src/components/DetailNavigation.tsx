@@ -1,3 +1,0 @@
-import type {ReactNode} from 'react';
-export function DetailNavigation({links}:{links:{href:string;label:string}[]}){return <nav className="detail-navigation shell" aria-label="相关页面与返回入口">{links.map(link=><a key={link.href} href={link.href}>{link.label}</a>)}</nav>}
-export function DetailBrief({title,items,note}:{title:string;items:{label:string;value:ReactNode}[];note?:string}){return <section className="detail-brief shell" aria-label={title}><p className="label">{title}</p><dl>{items.map(item=><div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>{note&&<p className="detail-brief-note">{note}</p>}</section>}

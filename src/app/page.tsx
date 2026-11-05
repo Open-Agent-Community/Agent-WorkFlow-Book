@@ -1,12 +1,15 @@
+import { JsonLd } from "@/components/seo/JsonLd";
 import { ButtonLink, LinkCard, PageHero, Section, SimulationBadge } from "@/components/ui";
 import { listChaptersInPart, listLabs, listParts } from "@/content";
 import { t } from "@/i18n";
 import { AUDIENCES, AUDIENCE_META } from "@/lib/audiences";
 import { routes } from "@/lib/routes";
+import { websiteJsonLd } from "@/lib/seo";
 
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={websiteJsonLd()} />
       <PageHero title={t.home.title} lead={t.home.lead} eyebrow={t.site.tagline} />
       <Section title={t.home.chooseAudience} id="audiences">
         <div className="grid gap-4 sm:grid-cols-2">

@@ -15,7 +15,7 @@ import type {
 } from "./schema";
 
 export type * from "./schema";
-export { buildRouteTable } from "./routes";
+export { buildRouteTable, indexableHrefs } from "./routes";
 export { loadBundle } from "./bundle";
 
 export const listParts = (): Part[] => loadBundle().parts;

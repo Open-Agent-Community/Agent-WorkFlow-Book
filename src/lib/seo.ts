@@ -38,3 +38,31 @@ export function buildMetadata(input: MetadataInput): Metadata {
     robots: noindex ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
+
+/** Serialise JSON-LD safely for inline <script> use: `<` is escaped so `</script>` cannot occur. */
+export function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+export function breadcrumbJsonLd(items: ReadonlyArray<{ name: string; href: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.href),
+    })),
+  };
+}
+
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    inLanguage: siteConfig.locale,
+  };
+}

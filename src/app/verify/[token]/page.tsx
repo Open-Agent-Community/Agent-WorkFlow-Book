@@ -29,12 +29,23 @@ export default async function VerifyResultPage({ params }: { params: Params }) {
       <Container className="py-8">
         {record ? (
           <div className="relative max-w-xl overflow-hidden rounded-lg border-2 border-dashed border-line p-6 dark:border-line-dark">
-            <p
+            <svg
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 flex -rotate-12 items-center justify-center text-3xl font-bold text-ink/10 select-none dark:text-ink-dark/10"
+              focusable="false"
+              className="pointer-events-none absolute inset-0 size-full text-ink/10 select-none dark:text-ink-dark/10"
             >
-              {t.verify.watermark}
-            </p>
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                transform="rotate(-12)"
+                className="fill-current text-3xl font-bold"
+                style={{ transformOrigin: "center", transformBox: "fill-box" }}
+              >
+                {t.verify.watermark}
+              </text>
+            </svg>
             <p className="mb-4">
               <Badge tone="warn">{t.verify.watermark}</Badge>
             </p>

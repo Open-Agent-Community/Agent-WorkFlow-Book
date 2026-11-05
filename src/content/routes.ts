@@ -53,3 +53,13 @@ export function extractInternalLinks(markdown: string): string[] {
   }
   return links;
 }
+
+/** Indexable pages for the sitemap: planned content and the demo lookup are excluded. */
+export function indexableHrefs(bundle: ContentBundle): string[] {
+  const verify = routes.verify();
+  return [...buildRouteTable(bundle).values()]
+    .filter((r) => r.status !== "planned")
+    .filter((r) => r.href !== verify && !r.href.startsWith(`${verify}/`))
+    .map((r) => r.href)
+    .sort();
+}

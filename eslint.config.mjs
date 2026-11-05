@@ -36,6 +36,11 @@ const config = [
       ],
     },
   },
+  {
+    // JSON-LD is the single allowed use of dangerouslySetInnerHTML (input is escaped).
+    files: ["src/components/seo/JsonLd.tsx"],
+    rules: { "react/no-danger": "off" },
+  },
 ];
 
 export default config;

@@ -1,10 +1,17 @@
+import type { ComponentType } from "react";
 import type { Lab } from "@/content/schema";
+import { FlowBuilderLab } from "./flow-builder/FlowBuilderLab";
+import { PromptStructureLab } from "./prompt-structure/PromptStructureLab";
+import { QuickstartLab } from "./quickstart/QuickstartLab";
 
-/** Maps a lab kind to its client component. Lab UIs land in P3. */
+/** Maps each lab kind from content to its client component. */
+const LABS: Record<Lab["kind"], ComponentType> = {
+  "flow-builder": FlowBuilderLab,
+  "prompt-structure": PromptStructureLab,
+  quickstart: QuickstartLab,
+};
+
 export function LabView({ kind }: { kind: Lab["kind"] }) {
-  return (
-    <p className="text-sm text-ink-muted dark:text-ink-dark-muted" data-lab-kind={kind}>
-      …
-    </p>
-  );
+  const Component = LABS[kind];
+  return <Component />;
 }

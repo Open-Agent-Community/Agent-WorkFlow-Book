@@ -1,3 +1,5 @@
+import { zhCNLabs } from "./zh-CN-labs";
+
 /** All UI strings for zh-CN. Add another locale by providing an object of the same shape. */
 export const zhCN = {
   site: {
@@ -80,6 +82,7 @@ export const zhCN = {
     simulation: "Simulation / 模拟",
     simulationNote: "这是浏览器内的确定性模拟：结果由固定规则计算，不调用任何模型或外部服务。",
     relatedChapters: "相关章节",
+    ...zhCNLabs,
   },
   syllabus: {
     title: "教学大纲（示例）",

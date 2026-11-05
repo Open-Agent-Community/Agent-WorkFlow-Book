@@ -9,6 +9,7 @@ import {
   ChapterFrontmatterSchema,
   DiagnosisDimensionSchema,
   LabSchema,
+  PageFrontmatterSchema,
   PartSchema,
   PathSchema,
   ResourceSchema,
@@ -23,6 +24,7 @@ import type {
   LearningPath,
   Part,
   Resource,
+  StaticPage,
   SyllabusWeek,
   VerifyRecord,
 } from "./schema";
@@ -39,6 +41,7 @@ export interface ContentBundle {
   verify: VerifyRecord[];
   syllabus: SyllabusWeek[];
   diagnosis: DiagnosisDimension[];
+  pages: StaticPage[];
 }
 
 let cached: ContentBundle | undefined;
@@ -58,6 +61,7 @@ export function loadBundle(): ContentBundle {
     verify: parseList("verify.ts", VerifyRecordSchema, rawVerify),
     syllabus: parseList("syllabus.ts", SyllabusWeekSchema, rawSyllabus),
     diagnosis: parseList("diagnosis.ts", DiagnosisDimensionSchema, rawDiagnosis),
+    pages: readMarkdownDir("pages", PageFrontmatterSchema),
   };
   return cached;
 }

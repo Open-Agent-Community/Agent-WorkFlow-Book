@@ -114,3 +114,10 @@ export const DiagnosisDimensionSchema = z.object({
   chapters: z.array(IdSchema).default([]),
 });
 export type DiagnosisDimension = z.infer<typeof DiagnosisDimensionSchema>;
+
+export const PageFrontmatterSchema = z.object({
+  id: IdSchema,
+  title: Text,
+  updated: z.union([DateSchema, z.date().transform((d) => d.toISOString().slice(0, 10))]),
+});
+export type StaticPage = z.infer<typeof PageFrontmatterSchema> & { body: string };

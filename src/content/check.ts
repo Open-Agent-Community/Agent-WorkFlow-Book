@@ -139,6 +139,11 @@ export function checkContent(bundle: ContentBundle, options: CheckOptions): Cont
   const bodies = [
     ...bundle.chapters.map((c) => ({ source: `chapter ${c.id}`, status: c.status, body: c.body })),
     ...bundle.cases.map((c) => ({ source: `case ${c.id}`, status: c.status, body: c.body })),
+    ...bundle.pages.map((p) => ({
+      source: `page ${p.id}`,
+      status: "published" as const,
+      body: p.body,
+    })),
   ];
   for (const { source, status: s, body } of bodies) {
     for (const href of extractInternalLinks(body)) {

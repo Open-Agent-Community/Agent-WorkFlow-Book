@@ -3,7 +3,16 @@
  */
 import type { Audience } from "@/lib/audiences";
 import { loadBundle } from "./bundle";
-import type { Case, Chapter, Lab, LearningPath, Part, Resource, VerifyRecord } from "./schema";
+import type {
+  Case,
+  Chapter,
+  Lab,
+  LearningPath,
+  Part,
+  Resource,
+  StaticPage,
+  VerifyRecord,
+} from "./schema";
 
 export type * from "./schema";
 export { buildRouteTable } from "./routes";
@@ -37,6 +46,9 @@ export const listResources = (audience?: Audience): Resource[] =>
 export const listVerifyRecords = (): VerifyRecord[] => loadBundle().verify;
 export const getVerifyRecord = (token: string): VerifyRecord | undefined =>
   loadBundle().verify.find((r) => r.token === token.trim().toUpperCase());
+
+export const getPage = (id: string): StaticPage | undefined =>
+  loadBundle().pages.find((p) => p.id === id);
 
 export const getSyllabus = () => loadBundle().syllabus;
 export const getDiagnosis = () => loadBundle().diagnosis;

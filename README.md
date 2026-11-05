@@ -22,12 +22,12 @@
 
 ## 学习入口
 
-| 面向人群 | 学习重点 | 在线入口 |
-| --- | --- | --- |
-| 普通读者 | 理解工作流方法，从首个流程练习开始 | [读者版](https://agentflow.moyingsmart.cn/reader) |
-| 高校师生 | 结合教学大纲、教学包与案例开展课程实践 | [高校版](https://agentflow.moyingsmart.cn/campus) |
-| 企业团队 | 梳理业务场景、理解方案边界与实施路径 | [企业版](https://agentflow.moyingsmart.cn/enterprise) |
-| FDE 实践者 | 围绕需求、方案、实现、验证与交接完成工程实践 | [FDE 版](https://agentflow.moyingsmart.cn/fde) |
+| 面向人群   | 学习重点                                     | 在线入口                                              |
+| ---------- | -------------------------------------------- | ----------------------------------------------------- |
+| 普通读者   | 理解工作流方法，从首个流程练习开始           | [读者版](https://agentflow.moyingsmart.cn/reader)     |
+| 高校师生   | 结合教学大纲、教学包与案例开展课程实践       | [高校版](https://agentflow.moyingsmart.cn/campus)     |
+| 企业团队   | 梳理业务场景、理解方案边界与实施路径         | [企业版](https://agentflow.moyingsmart.cn/enterprise) |
+| FDE 实践者 | 围绕需求、方案、实现、验证与交接完成工程实践 | [FDE 版](https://agentflow.moyingsmart.cn/fde)        |
 
 ## 内容与功能
 
@@ -41,13 +41,13 @@
 
 ## 技术架构
 
-| 技术 | 用途 |
-| --- | --- |
+| 技术                    | 用途                           |
+| ----------------------- | ------------------------------ |
 | Next.js 15 / App Router | 页面路由、静态生成与服务端渲染 |
-| React 19 | 页面组件与交互体验 |
-| TypeScript | 类型约束与代码维护 |
-| Tailwind CSS 4 | 样式与主题系统 |
-| 静态 HTML / JavaScript | 独立学习工作区与配套实践资源 |
+| React 19                | 页面组件与交互体验             |
+| TypeScript              | 类型约束与代码维护             |
+| Tailwind CSS 4          | 样式与主题系统                 |
+| 静态 HTML / JavaScript  | 独立学习工作区与配套实践资源   |
 
 当前实现不包含真实用户账户、在线支付、业务数据库或通用 Agent 运行时。
 

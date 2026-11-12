@@ -14,11 +14,14 @@ export function ResultPanel({
   score,
   summary,
   items,
+  emptyText = t.labs.noIssues,
   children,
 }: {
   score?: number;
   summary: string;
   items: readonly ResultItem[];
+  /** Shown when there are no items; pass "" to show nothing. */
+  emptyText?: string;
   children?: ReactNode;
 }) {
   return (
@@ -38,7 +41,9 @@ export function ResultPanel({
       <div role="status" aria-live="polite" className="mt-2 text-sm">
         <p>{summary}</p>
         {items.length === 0 ? (
-          <p className="mt-2 text-ok dark:text-green-300">{t.labs.noIssues}</p>
+          emptyText ? (
+            <p className="mt-2 text-ok dark:text-green-300">{emptyText}</p>
+          ) : null
         ) : (
           <ul className="mt-2 space-y-1">
             {items.map((item) => (

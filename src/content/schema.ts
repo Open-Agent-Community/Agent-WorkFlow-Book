@@ -62,7 +62,12 @@ export const PathSchema = z.object({
 });
 export type LearningPath = z.infer<typeof PathSchema>;
 
-export const LAB_KINDS = ["flow-builder", "prompt-structure", "quickstart"] as const;
+export const LAB_KINDS = [
+  "flow-builder",
+  "prompt-structure",
+  "quickstart",
+  "shipment-reconciliation",
+] as const;
 export const LabSchema = z.object({
   id: IdSchema,
   kind: z.enum(LAB_KINDS),

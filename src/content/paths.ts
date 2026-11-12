@@ -43,6 +43,11 @@ export const paths: z.input<typeof PathSchema>[] = [
       { kind: "chapter", ref: "ch05", note: "明确责任人与人工复核点。" },
       { kind: "case", ref: "invoice-triage", note: "参考一个后台流程案例。" },
       { kind: "lab", ref: "flow-builder", note: "把候选场景画成流程并自查。" },
+      {
+        kind: "lab",
+        ref: "shipment-reconciliation",
+        note: "五分钟演示：看代码、Agent 与复核人在对账流程中如何分工。",
+      },
     ],
   },
   {
@@ -55,6 +60,11 @@ export const paths: z.input<typeof PathSchema>[] = [
     steps: [
       { kind: "chapter", ref: "ch04", note: "从需求访谈到流程草图。" },
       { kind: "chapter", ref: "ch07", note: "先设计异常路径。" },
+      {
+        kind: "lab",
+        ref: "shipment-reconciliation",
+        note: "跑一遍最小闭环：对账、异常说明、人工复核、导出报告。",
+      },
       { kind: "lab", ref: "flow-builder", note: "用规则自查流程完整性。" },
       { kind: "case", ref: "support-handoff", note: "参考一个交接案例。" },
       { kind: "chapter", ref: "ch10", note: "设计验证方法（预览章节）。" },

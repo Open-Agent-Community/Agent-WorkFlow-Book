@@ -30,3 +30,8 @@ placeholder: true
 ## 可以练习
 
 在 [流程搭建器](/enterprise/labs/flow-builder) 中复现这个流程，看看规则检查会给出什么提示。
+
+## 可以练习
+
+用 [发货对账 Agent](/enterprise/labs/shipment-reconciliation) 演示看看：代码负责匹配和计算，
+模拟 Agent 负责解释异常，复核人决定如何处理。

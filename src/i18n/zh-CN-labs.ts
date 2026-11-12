@@ -1,3 +1,5 @@
+import { zhCNRecon } from "./zh-CN-recon";
+
 /** zh-CN strings for the interactive labs. Merged into the main dictionary under `labs`. */
 export const zhCNLabs = {
   result: "检查结果",
@@ -125,4 +127,5 @@ export const zhCNLabs = {
     restart: "重新开始",
     done: "完成！你已经设计出一条有责任人、有复核点的工作流。",
   },
+  recon: zhCNRecon,
 } as const;

@@ -2,11 +2,24 @@
 import { t } from "@/i18n";
 import type { ReconNoteParams } from "@/i18n/zh-CN-recon";
 import type { AgentNote } from "./agent";
+import type { Correction } from "./corrections";
 import type { ReportLabels } from "./report";
 import { formatCents, formatRefs } from "./report";
 import type { FieldIssue } from "./validate";
 
 const r = t.labs.recon;
+
+export const yuan = (cents: number) => formatCents(cents, true);
+
+/** One-line description of a reviewer's correction, used on screen and in the CSV. */
+export function correctionText(c: Correction): string {
+  if (c.kind === "keep-row") return r.fix.text["keep-row"](r.ref("shipments", c.row));
+  if (c.kind === "reassign-invoice") {
+    return r.fix.text["reassign-invoice"](r.ref("invoices", c.row), c.shipmentId);
+  }
+  const value = c.field === "quantity" ? String(c.value) : formatCents(c.value);
+  return r.fix.text["fill-field"](r.ref(c.table, c.row), r.fields[c.field], value);
+}
 
 export const reportLabels: ReportLabels = {
   headers: r.export.headers,
@@ -16,11 +29,12 @@ export const reportLabels: ReportLabels = {
   decisions: r.review.decisions,
   ref: r.ref,
   duplicate: r.duplicateMark,
+  correction: correctionText,
+  merged: r.fix.merged,
   yes: r.export.yes,
   no: r.export.no,
 };
 
-export const yuan = (cents: number) => formatCents(cents, true);
 export const signed = (n: number) => (n > 0 ? `+${n}` : String(n));
 export const signedYuan = (cents: number) => (cents > 0 ? "+" : "") + yuan(cents);
 
@@ -46,4 +60,12 @@ export const suggestionText = (note: AgentNote) => r.agent.suggestions[note.sugg
 
 export const severityTone = { high: "danger", medium: "warn", low: "neutral" } as const;
 export const decisionTone = { open: "warn", resolved: "ok", "follow-up": "warn" } as const;
+export const statusTone = {
+  matched: "ok",
+  difference: "warn",
+  "needs-review": "danger",
+  incomplete: "danger",
+  "not-invoiced": "warn",
+  "unmatched-invoice": "danger",
+} as const;
 export const roleTone = { code: "brand", agent: "sim", human: "ok" } as const;

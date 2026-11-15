@@ -5,6 +5,7 @@ import { t } from "@/i18n";
 import { ShipmentReconciliationLab } from "./ShipmentReconciliationLab";
 
 const r = t.labs.recon;
+const f = r.fix;
 
 describe("ShipmentReconciliationLab", () => {
   it("runs from sample data to a reviewed CSV export", async () => {
@@ -41,11 +42,26 @@ describe("ShipmentReconciliationLab", () => {
     await user.type(screen.getByLabelText(r.review.note), "第二批发票下周开具");
     await user.click(screen.getByLabelText(r.review.decisions["follow-up"]));
 
-    for (const id of ["EX-01", "EX-02", "EX-04", "EX-05"]) {
-      await user.click(
+    const open = (id: string) =>
+      user.click(
         screen.getByRole("button", { name: new RegExp(`${r.review.inspect.trim()}\\s*${id}`) }),
       );
-    }
+    // The reviewer corrects two exceptions; code recomputes each line at once.
+    await open("EX-02");
+    await user.click(screen.getByLabelText(f.keepRow(r.ref("shipments", 5))));
+    expect(screen.getByText(f.text["keep-row"](r.ref("shipments", 5)))).toBeInTheDocument();
+    await open("EX-04");
+    const qty = screen.getByLabelText(f.fillLabel(r.fields.quantity, r.ref("shipments", 8)));
+    await user.type(qty, "4.5");
+    await user.click(screen.getByRole("button", { name: f.apply }));
+    expect(screen.getByText(new RegExp(f.invalid))).toBeInTheDocument();
+    await user.clear(qty);
+    await user.type(qty, "40");
+    await user.click(screen.getByRole("button", { name: f.apply }));
+    expect(screen.getByText(f.text["fill-field"]("发货表第 8 行", "数量", "40"))).toBeVisible();
+    await open("EX-01");
+    expect(screen.getByText(f.none)).toBeInTheDocument();
+    await open("EX-05");
     await user.type(screen.getByLabelText(r.review.note), "已联系发票组");
     await user.click(screen.getByLabelText(r.review.decisions.resolved));
     await user.click(confirm);
@@ -53,8 +69,14 @@ describe("ShipmentReconciliationLab", () => {
     expect(screen.getAllByText(r.review.unresolved(4)).length).toBeGreaterThan(0);
     expect(screen.getByLabelText(r.review.note)).toBeDisabled();
 
-    // 5. Export keeps statuses and notes.
+    // 5. Code re-runs the same rules on the corrected data.
     await user.click(screen.getByRole("button", { name: r.next.review }));
+    expect(screen.getByText(f.rerun.summary(2, 5, 3))).toBeInTheDocument();
+    const compare = screen.getByRole("table", { name: f.rerun.compareCaption });
+    expect(within(compare).getAllByText(f.rerun.changed)).toHaveLength(2);
+
+    // 6. Export keeps statuses, notes and corrections.
+    await user.click(screen.getByRole("button", { name: r.next.rerun }));
     const link = screen.getByRole("link", { name: r.export.download });
     expect(link).toHaveAttribute("download", "shipment-reconciliation-report.csv");
     const csv = decodeURIComponent(link.getAttribute("href")?.split(",").slice(1).join(",") ?? "");
@@ -62,6 +84,7 @@ describe("ShipmentReconciliationLab", () => {
     expect(csv).toContain("转交跟进（未解决）");
     expect(csv).toContain("已联系发票组");
     expect(csv).toContain("INV-2007");
+    expect(csv).toContain("以发货表第 5 行为准，忽略同号的其他行,已匹配");
     expect(screen.getByRole("status")).toHaveTextContent(r.export.done);
   });
 });

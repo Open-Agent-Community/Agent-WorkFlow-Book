@@ -34,7 +34,7 @@ export const labs: z.input<typeof LabSchema>[] = [
     kind: "shipment-reconciliation",
     title: "发货对账 Agent",
     summary:
-      "五分钟演示：代码匹配发货与发票并计算差异，模拟 Agent 解释异常，复核人决定处理方式并导出报告。",
+      "五分钟演示：代码匹配发货与发票并计算差异，模拟 Agent 解释异常，复核人决定处理方式、修正数据后复算并导出报告。",
     audiences: ["enterprise", "fde"],
     chapters: ["ch05", "ch07"],
     status: "published",

@@ -6,10 +6,14 @@ import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { inputClass, labelClass } from "../shared/fields";
 import type { AgentBrief } from "./agent";
+import { CorrectionEditor } from "./CorrectionEditor";
+import type { RunChange } from "./corrections";
+import { correctionOption } from "./corrections";
 import { decisionTone, noteText, roleTone, severityTone, suggestionText } from "./present";
 import type { ReviewAction, ReviewState } from "./review";
 import { canConfirm, canDecide, DECISIONS, NOTE_MAX, reviewStats } from "./review";
 import type { InvoiceRow, ShipmentRow } from "./sample-data";
+import type { ReconResult } from "./types";
 import { CitedRows } from "./Tables";
 
 const r = t.labs.recon;
@@ -17,12 +21,16 @@ const v = r.review;
 
 export function ReviewPanel({
   brief,
+  result,
+  changes,
   state,
   dispatch,
   shipments,
   invoices,
 }: {
   brief: AgentBrief;
+  result: ReconResult;
+  changes: readonly RunChange[];
   state: ReviewState;
   dispatch: (a: ReviewAction) => void;
   shipments: readonly ShipmentRow[];
@@ -31,6 +39,9 @@ export function ReviewPanel({
   const stats = reviewStats(state);
   const current = brief.notes.find((n) => n.exception.id === state.selected);
   const entry = current ? state.entries[current.exception.id] : undefined;
+  const lineKey = result.lines.find((l) =>
+    l.exceptionIds.includes(current?.exception.id ?? ""),
+  )?.key;
 
   return (
     <div className="space-y-4">
@@ -152,6 +163,16 @@ export function ReviewPanel({
                 >
                   {entry.note.trim() ? v.noteHint(NOTE_MAX) : v.needsNote}
                 </p>
+                <CorrectionEditor
+                  key={current.exception.id}
+                  exception={current.exception}
+                  option={correctionOption(current.exception, shipments)}
+                  correction={state.corrections[current.exception.id]}
+                  change={changes.find((c) => c.key === lineKey)}
+                  onChange={(correction) =>
+                    dispatch({ type: "setCorrection", id: current.exception.id, correction })
+                  }
+                />
               </fieldset>
             </div>
           ) : (

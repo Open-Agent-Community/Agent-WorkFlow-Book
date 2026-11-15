@@ -1,0 +1,37 @@
+/** zh-CN strings for corrections and the re-run in the 发货对账 Agent lab (`labs.recon.fix`). */
+export const zhCNReconFix = {
+  heading: "修正来源数据（可选）",
+  hint: "只在你能确定正确值时修正。修正只作用于本次演示的数据副本，真实场景应回到源系统修改。",
+  none: "这类异常不能在这里直接修正：请写备注，并标记为已解决或转交跟进。",
+  noChange: "不修正",
+  keepRow: (ref: string) => `以${ref}为准`,
+  fillLabel: (field: string, ref: string) => `补录${field}（${ref}）`,
+  fillHint: { quantity: "填写大于 0 的整数。", amountCents: "填写金额（元），最多两位小数。" },
+  invalid: "格式不正确，未应用。",
+  apply: "应用修正",
+  clear: "撤销修正",
+  reassignLabel: (invoice: string) => `把发票 ${invoice} 改挂到发货单`,
+  applied: "已应用",
+  text: {
+    "keep-row": (ref: string) => `以${ref}为准，忽略同号的其他行`,
+    "fill-field": (ref: string, field: string, value: string) => `${ref}的${field}补录为 ${value}`,
+    "reassign-invoice": (ref: string, shipmentId: string) => `${ref}的发货单号改为 ${shipmentId}`,
+  },
+  recheck: "代码复算",
+  recheckLine: (id: string, before: string, after: string) => `${id}：${before} → ${after}`,
+  merged: "已并入其他发货单",
+  added: "新增",
+  rerun: {
+    appliedHeading: "复核人做出的修正",
+    empty: "没有做任何修正：复算结果与第一次对账相同。",
+    compareCaption: "修正前后对比（代码计算）",
+    shipmentId: "发货单号",
+    before: "修正前",
+    after: "修正后",
+    changed: "有变化",
+    resultCaption: "修正后的对账结果（代码计算）",
+    summary: (corrections: number, before: number, after: number) =>
+      `应用 ${corrections} 项人工修正后重新对账：异常由 ${before} 个变为 ${after} 个。`,
+    lesson: "数字的变化来自人修正了数据、代码重新计算；Agent 没有改动任何数字。",
+  },
+} as const;

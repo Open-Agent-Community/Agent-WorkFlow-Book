@@ -1,4 +1,5 @@
 /** zh-CN strings for the shipment reconciliation lab (发货对账 Agent). Merged under `labs.recon`. */
+import { zhCNReconFix } from "./zh-CN-recon-fix";
 
 /** Values the simulated Agent cites; all are pre-formatted from code results. */
 export interface ReconNoteParams {
@@ -27,13 +28,17 @@ export const zhCNRecon = {
       label: "模拟 Agent",
       text: "按固定规则读取代码结果，解释异常并引用来源行。不改数字，不做决定。",
     },
-    human: { label: "人工复核", text: "逐条查看异常、写备注、决定如何处理，并确认报告已复核。" },
+    human: {
+      label: "人工复核",
+      text: "逐条查看异常、写备注、决定如何处理；能确定时修正来源数据，并确认报告已复核。",
+    },
   },
   stages: {
     data: "载入样例数据",
     reconcile: "校验与对账",
     agent: "Agent 异常说明",
     review: "人工复核",
+    rerun: "修正后复算",
     export: "导出报告",
   },
   stageOf: (i: number, n: number) => `第 ${i} / ${n} 步`,
@@ -41,17 +46,20 @@ export const zhCNRecon = {
     data: "下面是两张内置的虚构样例表。先看一遍原始数据，再运行对账。",
     reconcile: "以下结果全部由代码按固定规则计算：先校验，再匹配，最后算差异。",
     agent: "模拟 Agent 根据上一步的对账结果生成异常说明。它只解释，不重算，也不替你决定。",
-    review: "逐条打开异常，查看来源行和 Agent 说明，写下备注并给出处理决定。",
-    export: "导出包含对账结果、来源行、异常状态和复核备注的 CSV。",
+    review: "逐条打开异常，查看来源行和 Agent 说明，写备注、做决定；能确定的可以直接修正来源数据。",
+    rerun: "代码把你的修正应用到样例数据的副本上，再按同样的规则对账一次。",
+    export: "导出包含对账结果、来源行、异常状态、复核备注和人工修正的 CSV。",
   },
   next: {
     data: "运行校验与对账",
     reconcile: "生成 Agent 异常说明",
     agent: "进入人工复核",
-    review: "前往导出",
+    review: "查看修正后复算",
+    rerun: "前往导出",
   },
   back: "上一步",
   restart: "重新开始",
+  fix: zhCNReconFix,
   tables: {
     shipments: "发货记录（样例，虚构）",
     invoices: "发票记录（样例，虚构）",
@@ -218,6 +226,8 @@ export const zhCNRecon = {
       "异常来源行",
       "异常状态",
       "复核备注",
+      "人工修正",
+      "修正后结果",
       "报告已复核",
     ],
   },

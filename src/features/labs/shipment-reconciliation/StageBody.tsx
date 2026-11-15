@@ -4,11 +4,13 @@ import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
 import { t } from "@/i18n";
 import type { AgentBrief } from "./agent";
+import type { RunChange } from "./corrections";
 import { noteText, roleTone, severityTone, suggestionText } from "./present";
 import { CSV_BOM, REPORT_FILENAME } from "./report";
 import type { ReconResult } from "./rules";
 import type { ReviewAction, ReviewState } from "./review";
 import { reviewStats } from "./review";
+import { RerunPanel } from "./RerunPanel";
 import { ReviewPanel, UnresolvedNote } from "./ReviewPanel";
 import type { InvoiceRow, ShipmentRow } from "./sample-data";
 import { InvoiceTable, ResultsTable, ShipmentTable, TableFrame, td, th } from "./Tables";
@@ -21,6 +23,9 @@ export interface StageProps {
   shipments: readonly ShipmentRow[];
   invoices: readonly InvoiceRow[];
   result: ReconResult;
+  /** The reconciliation re-run after the reviewer's corrections. */
+  after: ReconResult;
+  changes: RunChange[];
   brief: AgentBrief;
   csvRows: string[][];
   csv: string;
@@ -98,13 +103,15 @@ export function StageBody(props: StageProps) {
       );
     case "review":
       return <ReviewPanel {...props} />;
+    case "rerun":
+      return <RerunPanel {...props} />;
     case "export":
       return <ExportPanel {...props} />;
   }
 }
 
-/** Columns of the CSV shown in the on-page preview: id, result, exception, status, note. */
-const PREVIEW_COLUMNS = [0, 1, 10, 11, 14, 15] as const;
+/** CSV columns in the on-page preview: id, result, exception, status, note, fix, re-run. */
+const PREVIEW_COLUMNS = [0, 1, 10, 14, 15, 16, 17] as const;
 
 function ExportPanel({ state, csvRows, csv }: StageProps) {
   const pick = (row: readonly string[]) => PREVIEW_COLUMNS.map((i) => row[i] ?? "");

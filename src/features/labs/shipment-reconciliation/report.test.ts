@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildBrief, directionOf, explain } from "./agent";
+import { applyCorrections } from "./corrections";
 import { noteText, reportLabels } from "./present";
 import { buildReportRows, csvCell, formatCents, REPORT_COLUMNS, toCsv } from "./report";
 import { initialReview, reviewReducer } from "./review";
@@ -98,6 +99,45 @@ describe("CSV report", () => {
     ]);
     expect(rows[4]).toContain("转交跟进（未解决）");
     expect(rows[5]).toContain("待处理");
-    expect(rows.slice(1).every((r) => r[16] === "否")).toBe(true);
+    expect(rows.slice(1).every((r) => r[16] === "" && r[18] === "否")).toBe(true);
+    expect(rows.slice(1).map((r) => r[17])).toEqual(rows.slice(1).map((r) => r[1]));
+  });
+
+  it("records each correction and the re-run result of its line", () => {
+    const corrections = [
+      { id: "EX-02", correction: { kind: "keep-row", row: 5 } },
+      {
+        id: "EX-04",
+        correction: {
+          kind: "fill-field",
+          table: "shipments",
+          row: 8,
+          field: "quantity",
+          value: 40,
+        },
+      },
+      { id: "EX-05", correction: { kind: "reassign-invoice", row: 8, shipmentId: "SH-1004" } },
+    ] as const;
+    let review = initialReview(result.exceptions.map((e) => e.id));
+    for (const c of corrections) review = reviewReducer(review, { type: "setCorrection", ...c });
+    const fixed = applyCorrections(
+      SAMPLE_SHIPMENTS,
+      SAMPLE_INVOICES,
+      corrections.map((c) => c.correction),
+    );
+    const rows = buildReportRows(
+      result,
+      review,
+      reportLabels,
+      reconcile(fixed.shipments, fixed.invoices),
+    );
+    expect(rows.slice(1).map((r) => [r[0], r[1], r[16], r[17]])).toEqual([
+      ["SH-1001", "已匹配", "", "已匹配"],
+      ["SH-1002", "已匹配", "", "已匹配"],
+      ["SH-1003", "需人工判断", "以发货表第 5 行为准，忽略同号的其他行", "已匹配"],
+      ["SH-1004", "有差异", "", "有差异"],
+      ["SH-1005", "数据缺失", "发货表第 8 行的数量补录为 40", "已匹配"],
+      ["SH-1099", "发票无对应发货", "发票表第 8 行的发货单号改为 SH-1004", "已并入其他发货单"],
+    ]);
   });
 });

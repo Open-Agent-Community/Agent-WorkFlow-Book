@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { formatRefs } from "./report";
 import type { ReconResult } from "./rules";
 import type { InvoiceRow, ShipmentRow } from "./sample-data";
-import { reportLabels, signed, signedYuan, yuan } from "./present";
+import { reportLabels, signed, signedYuan, statusTone, yuan } from "./present";
 import type { SourceRef } from "./validate";
 
 const r = t.labs.recon;
@@ -134,21 +134,12 @@ export function CitedRows({
   );
 }
 
-const statusTone = {
-  matched: "ok",
-  difference: "warn",
-  "needs-review": "danger",
-  incomplete: "danger",
-  "not-invoiced": "warn",
-  "unmatched-invoice": "danger",
-} as const;
-
-export function ResultsTable({ result }: { result: ReconResult }) {
+export function ResultsTable({ result, label }: { result: ReconResult; label?: string }) {
   const c = r.results;
   const cols = [c.shipmentId, c.status, c.shippedQty, c.invoicedQty, c.qtyDiff];
   const more = [c.shippedAmount, c.invoicedAmount, c.amountDiff, c.invoices, c.refs, c.exceptions];
   return (
-    <TableFrame label={c.caption}>
+    <TableFrame label={label ?? c.caption}>
       <thead>
         <tr>
           {[...cols, ...more].map((h) => (

@@ -2,7 +2,9 @@
  * Stage and human-review state for the reconciliation lab. Pure reducer; labels live in i18n.
  * The reviewer, not code or the Agent, decides what happens to each exception.
  */
-export const STAGES = ["data", "reconcile", "agent", "review", "export"] as const;
+import type { Correction } from "./corrections";
+
+export const STAGES = ["data", "reconcile", "agent", "review", "rerun", "export"] as const;
 export type Stage = (typeof STAGES)[number];
 
 export const DECISIONS = ["open", "resolved", "follow-up"] as const;
@@ -21,6 +23,8 @@ export interface ReviewState {
   /** Exception currently open in the inspector. */
   selected: string | null;
   entries: Record<string, ReviewEntry>;
+  /** Source-data corrections chosen by the reviewer, keyed by exception id. */
+  corrections: Record<string, Correction>;
   confirmed: boolean;
 }
 
@@ -31,6 +35,7 @@ export type ReviewAction =
   | { type: "inspect"; id: string }
   | { type: "setNote"; id: string; note: string }
   | { type: "setDecision"; id: string; decision: Decision }
+  | { type: "setCorrection"; id: string; correction: Correction | null }
   | { type: "confirm" }
   | { type: "reopen" };
 
@@ -43,6 +48,7 @@ export function initialReview(exceptionIds: readonly string[]): ReviewState {
     stage: "data",
     selected: null,
     entries: Object.fromEntries(exceptionIds.map((id) => [id, blank])),
+    corrections: {},
     confirmed: false,
   };
 }
@@ -113,6 +119,14 @@ export function reviewReducer(state: ReviewState, action: ReviewAction): ReviewS
       return edit(state, action.id, (e) =>
         canDecide(e, action.decision) ? { ...e, decision: action.decision } : null,
       );
+    case "setCorrection": {
+      if (!state.entries[action.id] || state.confirmed) return state;
+      const rest = Object.fromEntries(
+        Object.entries(state.corrections).filter(([id]) => id !== action.id),
+      );
+      const corrections = action.correction ? { ...rest, [action.id]: action.correction } : rest;
+      return { ...state, corrections };
+    }
     case "confirm":
       return canConfirm(state) ? { ...state, confirmed: true } : state;
     case "reopen":

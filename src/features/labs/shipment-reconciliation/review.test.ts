@@ -37,8 +37,35 @@ describe("reconciliation review state", () => {
     expect(reviewErrors(s)).toEqual(["confirm-review"]);
     expect(run([{ type: "next" }], s).stage).toBe("review");
     s = run([{ type: "confirm" }, { type: "next" }], s);
+    expect(s.stage).toBe("rerun");
+    s = run([{ type: "next" }], s);
     expect(s.stage).toBe("export");
     expect(canAdvance(s)).toBe(false);
+  });
+
+  it("records, replaces and clears a correction, and locks it after confirmation", () => {
+    let s = run([{ type: "setCorrection", id: "EX-01", correction: { kind: "keep-row", row: 5 } }]);
+    expect(s.corrections).toEqual({ "EX-01": { kind: "keep-row", row: 5 } });
+    s = run([{ type: "setCorrection", id: "EX-01", correction: { kind: "keep-row", row: 6 } }], s);
+    expect(s.corrections["EX-01"]).toEqual({ kind: "keep-row", row: 6 });
+    expect(run([{ type: "setCorrection", id: "EX-01", correction: null }], s).corrections).toEqual(
+      {},
+    );
+    expect(
+      run([{ type: "setCorrection", id: "EX-99", correction: { kind: "keep-row", row: 5 } }], s),
+    ).toBe(s);
+    const locked = run(
+      [
+        ...toReview,
+        { type: "inspect", id: "EX-01" },
+        { type: "inspect", id: "EX-02" },
+        { type: "confirm" },
+        { type: "setCorrection", id: "EX-01", correction: null },
+      ],
+      s,
+    );
+    expect(locked.corrections["EX-01"]).toEqual({ kind: "keep-row", row: 6 });
+    expect(run([{ type: "reset" }], locked).corrections).toEqual({});
   });
 
   it("only resolves an exception with a note; clearing the note reopens it", () => {

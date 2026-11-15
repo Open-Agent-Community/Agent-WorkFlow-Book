@@ -3,6 +3,7 @@
  * caller turns the returned text into a download. One row per (line × exception); a line
  * without exceptions gets one row with empty exception columns.
  */
+import type { Correction } from "./corrections";
 import type { ExceptionKind, LineStatus, ReconResult, Severity, Totals } from "./rules";
 import type { Decision, ReviewState } from "./review";
 import type { SourceRef, Table } from "./validate";
@@ -16,11 +17,14 @@ export interface ReportLabels {
   decisions: Record<Decision, string>;
   ref: (table: Table, row: number) => string;
   duplicate: string;
+  correction: (c: Correction) => string;
+  /** Shown as the post-correction result of a line that no longer exists. */
+  merged: string;
   yes: string;
   no: string;
 }
 
-export const REPORT_COLUMNS = 17;
+export const REPORT_COLUMNS = 19;
 
 /** Integer cents to a fixed two-decimal string, optionally with thousands separators. */
 export function formatCents(cents: number, group = false): string {
@@ -49,7 +53,10 @@ export function buildReportRows(
   result: ReconResult,
   review: ReviewState,
   labels: ReportLabels,
+  /** The reconciliation re-run on corrected data; defaults to the first run. */
+  after: ReconResult = result,
 ): string[][] {
+  const afterStatus = new Map(after.lines.map((l) => [l.key, l.status]));
   const byId = new Map(result.exceptions.map((e) => [e.id, e]));
   const reviewed = review.confirmed ? labels.yes : labels.no;
   const rows: string[][] = [[...labels.headers]];
@@ -66,10 +73,13 @@ export function buildReportRows(
       line.invoiceIds.join("; "),
       formatRefs(line.refs, labels, line.duplicateRefs),
     ];
+    const next = afterStatus.get(line.key);
+    const tail = [next ? labels.lineStatus[next] : labels.merged, reviewed];
     const exceptions = line.exceptionIds.flatMap((id) => byId.get(id) ?? []);
-    if (exceptions.length === 0) rows.push([...base, "", "", "", "", "", "", reviewed]);
+    if (exceptions.length === 0) rows.push([...base, "", "", "", "", "", "", "", ...tail]);
     for (const e of exceptions) {
       const entry = review.entries[e.id];
+      const fix = review.corrections[e.id];
       rows.push([
         ...base,
         e.id,
@@ -78,7 +88,8 @@ export function buildReportRows(
         formatRefs(e.refs, labels, e.duplicateRefs),
         labels.decisions[entry?.decision ?? "open"],
         entry?.note.trim() ?? "",
-        reviewed,
+        fix ? labels.correction(fix) : "",
+        ...tail,
       ]);
     }
   }

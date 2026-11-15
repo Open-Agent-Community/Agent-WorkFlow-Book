@@ -6,6 +6,7 @@ import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { ResultPanel } from "../shared/ResultPanel";
 import { buildBrief } from "./agent";
+import { applyCorrections, compareRuns, correctionOption, fitsOption } from "./corrections";
 import { reportLabels } from "./present";
 import { buildReportRows, toCsv } from "./report";
 import type { ReviewState } from "./review";
@@ -44,6 +45,8 @@ function statusSummary(state: ReviewState) {
       return state.confirmed
         ? `${r.review.confirmed}${r.review.unresolved(stats.unresolved)}`
         : r.review.progress(stats.inspected, stats.total);
+    case "rerun":
+      return r.fix.rerun.lesson;
     case "export":
       return r.export.done;
   }
@@ -55,7 +58,20 @@ export function ShipmentReconciliationLab() {
     result.exceptions.map((e) => e.id),
     initialReview,
   );
-  const csvRows = useMemo(() => buildReportRows(result, state, reportLabels), [state]);
+  // Re-run: apply the reviewer's (valid) corrections to a copy of the data and reconcile again.
+  const { after, changes } = useMemo(() => {
+    const valid = result.exceptions.flatMap((e) => {
+      const c = state.corrections[e.id];
+      return c && fitsOption(correctionOption(e, SAMPLE_SHIPMENTS), c) ? [c] : [];
+    });
+    const fixed = applyCorrections(SAMPLE_SHIPMENTS, SAMPLE_INVOICES, valid);
+    const rerun = reconcile(fixed.shipments, fixed.invoices);
+    return { after: rerun, changes: compareRuns(result, rerun) };
+  }, [state.corrections]);
+  const csvRows = useMemo(
+    () => buildReportRows(result, state, reportLabels, after),
+    [state, after],
+  );
   const csv = useMemo(() => toCsv(csvRows), [csvRows]);
   const index = STAGES.indexOf(state.stage);
   const errors = reviewErrors(state);
@@ -109,6 +125,8 @@ export function ShipmentReconciliationLab() {
           shipments={SAMPLE_SHIPMENTS}
           invoices={SAMPLE_INVOICES}
           result={result}
+          after={after}
+          changes={changes}
           brief={brief}
           csvRows={csvRows}
           csv={csv}

@@ -95,3 +95,72 @@ export const SAMPLE_INVOICES: readonly InvoiceRow[] = [
   // No shipment SH-1099 exists.
   { row: 8, invoiceId: "INV-2007", shipmentId: "SH-1099", quantity: 10, amountCents: 150_000 },
 ];
+
+/**
+ * A second fictional scenario that exercises the rules the first one does not: a shipment with
+ * no invoice, over-invoicing, a price-or-quantity mismatch, a duplicate invoice row and an
+ * invalid (negative) amount.
+ */
+export const ADVANCED_SHIPMENTS: readonly ShipmentRow[] = [
+  {
+    row: 2,
+    shipmentId: "SH-2001",
+    customer: "样例电子（虚构）",
+    sku: "包装盒 C1",
+    quantity: 80,
+    amountCents: 1_600_000,
+  },
+  {
+    row: 3,
+    shipmentId: "SH-2002",
+    customer: "演示家居（虚构）",
+    sku: "木托盘",
+    quantity: 100,
+    amountCents: 2_000_000,
+  },
+  {
+    row: 4,
+    shipmentId: "SH-2003",
+    customer: "测试食品（虚构）",
+    sku: "保温箱",
+    quantity: 50,
+    amountCents: 500_000,
+  },
+  {
+    row: 5,
+    shipmentId: "SH-2004",
+    customer: "示例商贸（虚构）",
+    sku: "纸箱 A4",
+    quantity: 30,
+    amountCents: 300_000,
+  },
+  {
+    row: 6,
+    shipmentId: "SH-2005",
+    customer: "样例制造（虚构）",
+    sku: "打包带",
+    quantity: 20,
+    amountCents: -10_000,
+  },
+  {
+    row: 7,
+    shipmentId: "SH-2006",
+    customer: "演示物流（虚构）",
+    sku: "封箱胶带",
+    quantity: 10,
+    amountCents: 200_000,
+  },
+];
+
+export const ADVANCED_INVOICES: readonly InvoiceRow[] = [
+  // SH-2001 has no invoice at all.
+  { row: 2, invoiceId: "INV-3001", shipmentId: "SH-2002", quantity: 60, amountCents: 1_200_000 },
+  { row: 3, invoiceId: "INV-3002", shipmentId: "SH-2002", quantity: 60, amountCents: 1_200_000 },
+  // Fewer units but a higher amount than shipped: the signs of the differences disagree.
+  { row: 4, invoiceId: "INV-3003", shipmentId: "SH-2003", quantity: 45, amountCents: 550_000 },
+  // Rows 5 and 6 are the same invoice imported twice.
+  { row: 5, invoiceId: "INV-3004", shipmentId: "SH-2004", quantity: 30, amountCents: 300_000 },
+  { row: 6, invoiceId: "INV-3004", shipmentId: "SH-2004", quantity: 30, amountCents: 300_000 },
+  { row: 7, invoiceId: "INV-3005", shipmentId: "SH-2005", quantity: 20, amountCents: 100_000 },
+  { row: 8, invoiceId: "INV-3006", shipmentId: "SH-2006", quantity: 10, amountCents: 200_000 },
+];

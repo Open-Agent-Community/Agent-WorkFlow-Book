@@ -52,10 +52,11 @@ export function sumTotals(items: readonly Totals[]): Totals {
   );
 }
 
+/** Totals of a row, or null when a number is missing or could not be read (NaN). */
 function totalsOf(r: { quantity: number | null; amountCents: number | null }): Totals | null {
-  return r.quantity === null || r.amountCents === null
-    ? null
-    : { quantity: r.quantity, amountCents: r.amountCents };
+  const { quantity, amountCents } = r;
+  if (quantity === null || amountCents === null) return null;
+  return Number.isNaN(quantity) || Number.isNaN(amountCents) ? null : { quantity, amountCents };
 }
 
 const newLine = (key: string, shipmentId: string, status: LineStatus): ReconLine => ({

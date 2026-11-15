@@ -1,4 +1,5 @@
 /** zh-CN strings for the shipment reconciliation lab (发货对账 Agent). Merged under `labs.recon`. */
+import { zhCNReconData } from "./zh-CN-recon-data";
 import { zhCNReconFix } from "./zh-CN-recon-fix";
 
 /** Values the simulated Agent cites; all are pre-formatted from code results. */
@@ -34,7 +35,7 @@ export const zhCNRecon = {
     },
   },
   stages: {
-    data: "载入样例数据",
+    data: "载入数据",
     reconcile: "校验与对账",
     agent: "Agent 异常说明",
     review: "人工复核",
@@ -43,7 +44,7 @@ export const zhCNRecon = {
   },
   stageOf: (i: number, n: number) => `第 ${i} / ${n} 步`,
   leads: {
-    data: "下面是两张内置的虚构样例表。先看一遍原始数据，再运行对账。",
+    data: "选择内置的虚构样例，或粘贴自己的 CSV。先看一遍原始数据，再运行对账。",
     reconcile: "以下结果全部由代码按固定规则计算：先校验，再匹配，最后算差异。",
     agent: "模拟 Agent 根据上一步的对账结果生成异常说明。它只解释，不重算，也不替你决定。",
     review: "逐条打开异常，查看来源行和 Agent 说明，写备注、做决定；能确定的可以直接修正来源数据。",
@@ -60,9 +61,10 @@ export const zhCNRecon = {
   back: "上一步",
   restart: "重新开始",
   fix: zhCNReconFix,
+  data: zhCNReconData,
   tables: {
-    shipments: "发货记录（样例，虚构）",
-    invoices: "发票记录（样例，虚构）",
+    shipments: "发货记录",
+    invoices: "发票记录",
     row: "来源行",
     shipmentId: "发货单号",
     invoiceId: "发票号",
@@ -120,7 +122,7 @@ export const zhCNRecon = {
   },
   kinds: {
     "conflicting-rows": "同号记录冲突",
-    "missing-field": "必填字段缺失",
+    "missing-field": "必填字段缺失或无效",
     "unmatched-invoice": "发票无对应发货",
     "amount-difference": "数量或金额差异",
     "not-invoiced": "已发货未开票",
@@ -147,7 +149,7 @@ export const zhCNRecon = {
         `${p.shipment} 有编号相同但内容不一致的记录，代码无法判断哪一行正确，因此没有计算差异。` +
         `相关发票：${p.invoices || "无"}。来源：${p.refs}。`,
       "fill-missing-field": (p: ReconNoteParams) =>
-        `${p.shipment || "该记录"} 缺少必填字段：${p.fields}。缺数据时代码不推算，也不计算差异。` +
+        `${p.shipment || "该记录"} 的必填字段缺失或格式不正确：${p.fields}。代码不推算，也不计算差异。` +
         `相关发票：${p.invoices || "无"}。来源：${p.refs}。`,
       "trace-invoice": (p: ReconNoteParams) =>
         `发票 ${p.invoices} 引用的发货单号 ${p.shipment || "（空）"} 在发货表中不存在。` +
@@ -164,12 +166,12 @@ export const zhCNRecon = {
       "issue-invoice": (p: ReconNoteParams) =>
         `${p.shipment} 已发货，但没有任何发票。来源：${p.refs}。`,
       "confirm-duplicate": (p: ReconNoteParams) =>
-        `${p.shipment} 的发货记录有完全相同的重复行，代码只计入一次，未重复计算数量和金额；` +
+        `${p.shipment} 有完全相同的重复行，代码只计入一次，未重复计算数量和金额；` +
         `发票 ${p.invoices || "（无）"} 合计后与计入的那一行比较。来源：${p.refs}。`,
     },
     suggestions: {
       "pick-source-of-truth": "请业务人员核对原始单据，确定以哪一行为准后重新对账。",
-      "fill-missing-field": "请数据提供方补录缺失字段后重新对账。",
+      "fill-missing-field": "请数据提供方补录或更正该字段后重新对账。",
       "trace-invoice": "核对发货单号是否录错，或发货记录是否漏导入。",
       "follow-up-invoicing": "确认是否为分批开票，并跟进剩余部分的发票。",
       "check-over-invoicing": "核对是否重复开票或开错发货单。",

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { buttonClasses } from "@/components/ui/Button";
 import { t } from "@/i18n";
@@ -29,6 +30,8 @@ export interface StageProps {
   brief: AgentBrief;
   csvRows: string[][];
   csv: string;
+  /** Data-source picker shown in the first stage. */
+  picker?: ReactNode;
 }
 
 export const RoleBadge = ({ role }: { role: keyof typeof roleTone }) => (
@@ -41,6 +44,7 @@ export function StageBody(props: StageProps) {
     case "data":
       return (
         <div className="space-y-4">
+          {props.picker}
           <ShipmentTable rows={shipments} label={r.tables.shipments} />
           <InvoiceTable rows={invoices} label={r.tables.invoices} />
         </div>

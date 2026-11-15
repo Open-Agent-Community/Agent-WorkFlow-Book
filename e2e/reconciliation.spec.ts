@@ -15,8 +15,8 @@ test("发货对账 Agent: reachable from the enterprise path, reviewable and exp
   await expect(page.getByText("Simulation / 模拟").first()).toBeVisible();
 
   // 1. Sample tables before running.
-  await expect(page.getByRole("table", { name: "发货记录（样例，虚构）" })).toBeVisible();
-  await expect(page.getByRole("table", { name: "发票记录（样例，虚构）" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "发货记录" })).toBeVisible();
+  await expect(page.getByRole("table", { name: "发票记录" })).toBeVisible();
   await expectNoSeriousA11yViolations(page);
 
   // 2–3. Code reconciles, then the simulated Agent explains.
@@ -83,4 +83,29 @@ test("发货对账 Agent review stage has no serious a11y violations in dark mod
   }
   await page.getByRole("button", { name: /查看\s*EX-03/ }).click();
   await expectNoSeriousA11yViolations(page);
+});
+
+test("发货对账 Agent: advanced sample and pasted CSV run through the same rules", async ({
+  page,
+}) => {
+  await page.goto("/enterprise/labs/shipment-reconciliation");
+  await page.getByLabel(/进阶样例/).check();
+  await page.getByRole("button", { name: "运行校验与对账" }).click();
+  await expect(page.getByRole("status")).toContainText("2 条完全匹配，发现 5 个异常");
+  await page.getByRole("button", { name: "生成 Agent 异常说明" }).click();
+  await expect(
+    page.getByText(/SH-2003 的数量差（\+5）与金额差（¥-500.00）方向不一致/),
+  ).toBeVisible();
+  for (const name of ["上一步", "上一步"]) await page.getByRole("button", { name }).click();
+
+  await page.getByLabel("粘贴自己的 CSV").check();
+  await expect(page.getByText(/不会上传/)).toBeVisible();
+  await page.getByLabel("发货记录 CSV").fill("发货单号,客户,物料,数量,金额\nSH-9,C,S,2,abc\n");
+  await page.getByLabel("发票记录 CSV").fill("发票号,发货单号,数量,金额\nINV-9,SH-9,2,10\n");
+  await page.getByRole("button", { name: "载入并校验" }).click();
+  await expect(page.getByText("已载入发货 1 行、发票 1 行。")).toBeVisible();
+  await expect(page.getByText("格式不正确").first()).toBeVisible();
+  await expectNoSeriousA11yViolations(page);
+  await page.getByRole("button", { name: "运行校验与对账" }).click();
+  await expect(page.getByRole("status")).toContainText("0 条完全匹配，发现 1 个异常");
 });

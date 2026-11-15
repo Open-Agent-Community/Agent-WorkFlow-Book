@@ -34,8 +34,12 @@ export function TableFrame({ label, children }: { label: string; children: React
 
 const Missing = () => <Badge tone="danger">{r.tables.missing}</Badge>;
 const show = (value: string) => (value.trim() ? value : <Missing />);
-const num = (value: number | null) => (value === null ? <Missing /> : value);
-const money = (value: number | null) => (value === null ? <Missing /> : yuan(value));
+/** Imported text that could not be read as a number. */
+const Invalid = () => <Badge tone="danger">{r.data.invalid}</Badge>;
+const num = (value: number | null) =>
+  value === null ? <Missing /> : Number.isNaN(value) ? <Invalid /> : value;
+const money = (value: number | null) =>
+  value === null ? <Missing /> : Number.isNaN(value) ? <Invalid /> : yuan(value);
 
 export function ShipmentTable({ rows, label }: { rows: readonly ShipmentRow[]; label: string }) {
   return (

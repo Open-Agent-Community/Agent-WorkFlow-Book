@@ -1,160 +1,85 @@
 "use client";
 
-import { useMemo, useReducer } from "react";
-import { Button } from "@/components/ui/Button";
+import { useState } from "react";
 import { t } from "@/i18n";
-import { cn } from "@/lib/utils";
-import { ResultPanel } from "../shared/ResultPanel";
-import { buildBrief } from "./agent";
-import { applyCorrections, compareRuns, correctionOption, fitsOption } from "./corrections";
-import { reportLabels } from "./present";
-import { buildReportRows, toCsv } from "./report";
-import type { ReviewState } from "./review";
+import { DataPicker, errorText } from "./DataPicker";
+import type { Source } from "./DataPicker";
+import { invoicesToCsv, readInvoices, readShipments, shipmentsToCsv } from "./csv-import";
 import {
-  canAdvance,
-  initialReview,
-  reviewErrors,
-  reviewReducer,
-  reviewStats,
-  STAGES,
-} from "./review";
-import { reconcile } from "./rules";
-import { SAMPLE_INVOICES, SAMPLE_SHIPMENTS } from "./sample-data";
-import { RoleBadge, StageBody } from "./StageBody";
+  ADVANCED_INVOICES,
+  ADVANCED_SHIPMENTS,
+  SAMPLE_INVOICES,
+  SAMPLE_SHIPMENTS,
+} from "./sample-data";
+import type { Dataset } from "./Workflow";
+import { Workflow } from "./Workflow";
 
-const r = t.labs.recon;
-const ROLES = ["code", "agent", "human"] as const;
+const d = t.labs.recon.data;
+const BUILT_IN: Record<Exclude<Source, "custom">, Dataset> = {
+  basic: { shipments: SAMPLE_SHIPMENTS, invoices: SAMPLE_INVOICES },
+  advanced: { shipments: ADVANCED_SHIPMENTS, invoices: ADVANCED_INVOICES },
+};
+const SHIPMENT_HEADERS = ["shipmentId", "customer", "sku", "quantity", "amount"] as const;
+const INVOICE_HEADERS = ["invoiceId", "shipmentId", "quantity", "amount"] as const;
 
-// The sample data is fixed, so the reconciliation is computed once per page load.
-const result = reconcile(SAMPLE_SHIPMENTS, SAMPLE_INVOICES);
-const brief = buildBrief(result);
-
-function statusSummary(state: ReviewState) {
-  const stats = reviewStats(state);
-  switch (state.stage) {
-    case "data":
-      return (
-        `${r.tables.shipments} ${r.tables.rowCount(SAMPLE_SHIPMENTS.length)}，` +
-        `${r.tables.invoices} ${r.tables.rowCount(SAMPLE_INVOICES.length)}。`
-      );
-    case "reconcile":
-      return r.results.summary(brief.lines, brief.matched, brief.exceptions);
-    case "agent":
-      return r.agent.disclaimer;
-    case "review":
-      return state.confirmed
-        ? `${r.review.confirmed}${r.review.unresolved(stats.unresolved)}`
-        : r.review.progress(stats.inspected, stats.total);
-    case "rerun":
-      return r.fix.rerun.lesson;
-    case "export":
-      return r.export.done;
-  }
-}
-
+/** Holds the chosen dataset; the workflow below is remounted whenever the data changes. */
 export function ShipmentReconciliationLab() {
-  const [state, dispatch] = useReducer(
-    reviewReducer,
-    result.exceptions.map((e) => e.id),
-    initialReview,
-  );
-  // Re-run: apply the reviewer's (valid) corrections to a copy of the data and reconcile again.
-  const { after, changes } = useMemo(() => {
-    const valid = result.exceptions.flatMap((e) => {
-      const c = state.corrections[e.id];
-      return c && fitsOption(correctionOption(e, SAMPLE_SHIPMENTS), c) ? [c] : [];
+  const [active, setActive] = useState<{ source: Source; data: Dataset; run: number }>({
+    source: "basic",
+    data: BUILT_IN.basic,
+    run: 0,
+  });
+  const [choice, setChoice] = useState<Source>("basic");
+  const [texts, setTexts] = useState({ shipments: "", invoices: "" });
+  const [errors, setErrors] = useState<string[]>([]);
+  const [loadedNote, setLoadedNote] = useState("");
+
+  const use = (source: Source, data: Dataset) =>
+    setActive((prev) => ({ source, data, run: prev.run + 1 }));
+  const template = () =>
+    setTexts({
+      shipments: shipmentsToCsv(
+        active.data.shipments,
+        SHIPMENT_HEADERS.map((c) => d.columns[c]),
+      ),
+      invoices: invoicesToCsv(
+        active.data.invoices,
+        INVOICE_HEADERS.map((c) => d.columns[c]),
+      ),
     });
-    const fixed = applyCorrections(SAMPLE_SHIPMENTS, SAMPLE_INVOICES, valid);
-    const rerun = reconcile(fixed.shipments, fixed.invoices);
-    return { after: rerun, changes: compareRuns(result, rerun) };
-  }, [state.corrections]);
-  const csvRows = useMemo(
-    () => buildReportRows(result, state, reportLabels, after),
-    [state, after],
+
+  const picker = (
+    <DataPicker
+      active={active.source}
+      choice={choice}
+      shipmentsText={texts.shipments}
+      invoicesText={texts.invoices}
+      errors={errors}
+      loadedNote={loadedNote}
+      onChoose={(s) => {
+        setChoice(s);
+        setErrors([]);
+        setLoadedNote("");
+        if (s === "custom") {
+          if (!texts.shipments && !texts.invoices) template();
+        } else if (s !== active.source) use(s, BUILT_IN[s]);
+      }}
+      onText={(table, text) => setTexts((prev) => ({ ...prev, [table]: text }))}
+      onTemplate={template}
+      onLoad={() => {
+        const s = readShipments(texts.shipments);
+        const i = readInvoices(texts.invoices);
+        const problems = [
+          ...(s.ok ? [] : [d.errorIn(d.shipmentsLabel, errorText(s.error))]),
+          ...(i.ok ? [] : [d.errorIn(d.invoicesLabel, errorText(i.error))]),
+        ];
+        setErrors(problems);
+        if (!s.ok || !i.ok) return setLoadedNote("");
+        setLoadedNote(d.loaded(s.rows.length, i.rows.length));
+        use("custom", { shipments: s.rows, invoices: i.rows });
+      }}
+    />
   );
-  const csv = useMemo(() => toCsv(csvRows), [csvRows]);
-  const index = STAGES.indexOf(state.stage);
-  const errors = reviewErrors(state);
 
-  return (
-    <div className="space-y-6">
-      <section
-        aria-labelledby="recon-roles"
-        className="rounded-lg bg-surface-muted p-4 dark:bg-surface-dark-muted"
-      >
-        <h3 id="recon-roles" className="mb-2 text-sm font-semibold">
-          {r.roles.heading}
-        </h3>
-        <ul className="grid gap-2 text-sm md:grid-cols-3">
-          {ROLES.map((role) => (
-            <li key={role} className="flex items-start gap-2">
-              <span className="shrink-0">
-                <RoleBadge role={role} />
-              </span>
-              <span>{r.roles[role].text}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <ol className="flex flex-wrap gap-2 text-xs" aria-label={r.stageOf(index + 1, STAGES.length)}>
-        {STAGES.map((stage, i) => (
-          <li
-            key={stage}
-            aria-current={i === index ? "step" : undefined}
-            className={cn(
-              "rounded-full px-3 py-1",
-              i === index ? "bg-brand-600 text-white" : "border border-line dark:border-line-dark",
-            )}
-          >
-            {i + 1}. {r.stages[stage]}
-          </li>
-        ))}
-      </ol>
-
-      <section aria-labelledby="recon-stage">
-        <h3 id="recon-stage" className="font-semibold">
-          {r.stages[state.stage]}
-        </h3>
-        <p className="mt-1 mb-4 text-sm text-ink-muted dark:text-ink-dark-muted">
-          {r.leads[state.stage]}
-        </p>
-        <StageBody
-          state={state}
-          dispatch={dispatch}
-          shipments={SAMPLE_SHIPMENTS}
-          invoices={SAMPLE_INVOICES}
-          result={result}
-          after={after}
-          changes={changes}
-          brief={brief}
-          csvRows={csvRows}
-          csv={csv}
-        />
-      </section>
-
-      <ResultPanel
-        summary={statusSummary(state)}
-        emptyText=""
-        items={errors.map((e) => ({ key: e, severity: "error", text: r.review.errors[e] }))}
-      />
-
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="secondary"
-          disabled={index === 0}
-          onClick={() => dispatch({ type: "back" })}
-        >
-          {r.back}
-        </Button>
-        {state.stage === "export" ? (
-          <Button onClick={() => dispatch({ type: "reset" })}>{r.restart}</Button>
-        ) : (
-          <Button disabled={!canAdvance(state)} onClick={() => dispatch({ type: "next" })}>
-            {r.next[state.stage]}
-          </Button>
-        )}
-      </div>
-    </div>
-  );
+  return <Workflow key={active.run} data={active.data} picker={picker} />;
 }

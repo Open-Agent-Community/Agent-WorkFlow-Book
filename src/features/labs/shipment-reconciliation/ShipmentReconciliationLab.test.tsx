@@ -87,4 +87,38 @@ describe("ShipmentReconciliationLab", () => {
     expect(csv).toContain("以发货表第 5 行为准，忽略同号的其他行,已匹配");
     expect(screen.getByRole("status")).toHaveTextContent(r.export.done);
   });
+
+  it("switches to the advanced sample and imports pasted CSV", async () => {
+    const user = userEvent.setup();
+    render(<ShipmentReconciliationLab />);
+    const d = r.data;
+
+    await user.click(screen.getByLabelText(d.sources.advanced));
+    expect(screen.getByText("SH-2001", { selector: "td" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: r.next.data }));
+    expect(screen.getByRole("status")).toHaveTextContent(r.results.summary(6, 2, 5));
+    await user.click(screen.getByRole("button", { name: r.back }));
+
+    // Custom CSV: a broken header is reported and nothing changes.
+    await user.click(screen.getByLabelText(d.sources.custom));
+    expect(screen.getByText(d.privacy)).toBeInTheDocument();
+    const ship = screen.getByLabelText(d.shipmentsLabel);
+    const inv = screen.getByLabelText(d.invoicesLabel);
+    expect((ship as HTMLTextAreaElement).value).toContain("SH-2001");
+    await user.clear(ship);
+    await user.type(ship, "发货单号,数量{enter}SH-1,1");
+    await user.click(screen.getByRole("button", { name: d.load }));
+    expect(screen.getByText(/缺少表头列：客户、物料、金额（元）/)).toBeInTheDocument();
+    expect(screen.getByText("SH-2001", { selector: "td" })).toBeInTheDocument();
+
+    await user.clear(ship);
+    await user.type(ship, "发货单号,客户,物料,数量,金额{enter}SH-9,C,S,2,10");
+    await user.clear(inv);
+    await user.type(inv, "发票号,发货单号,数量,金额{enter}INV-9,SH-9,2,10");
+    await user.click(screen.getByRole("button", { name: d.load }));
+    expect(screen.getByText(d.loaded(1, 1))).toBeInTheDocument();
+    expect(screen.getAllByText("SH-9", { selector: "td" })).toHaveLength(2);
+    await user.click(screen.getByRole("button", { name: r.next.data }));
+    expect(screen.getByRole("status")).toHaveTextContent(r.results.summary(1, 1, 0));
+  });
 });
